@@ -1,0 +1,2747 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IPDH · Dashboard de Demanda 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=JetBrains+Mono:wght@400;500;700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d1117;
+  --bg-2: #161b22;
+  --bg-3: #1c2330;
+  --bg-4: #242c3a;
+  --line: #2d3748;
+  --line-2: #3a4556;
+  --txt: #e6edf3;
+  --txt-dim: #8b96a8;
+  --txt-mute: #5a6478;
+  --accent: #d4a574;
+  --accent-bright: #e8b886;
+  --accent-dark: #8a6d4a;
+  --falta: #f43f5e;
+  --falta-bg: rgba(244, 63, 94, 0.12);
+  --sobra: #10b981;
+  --sobra-bg: rgba(16, 185, 129, 0.12);
+  --warn: #f59e0b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--txt);
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(212, 165, 116, 0.08), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(16, 185, 129, 0.04), transparent),
+    var(--bg);
+}
+
+.app {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 32px 40px 80px;
+}
+
+/* HEADER */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 24px;
+  margin-bottom: 36px;
+}
+.brand .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.brand h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 42px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.brand h1 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent);
+}
+.meta {
+  text-align: right;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--txt-mute);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.meta div { line-height: 1.8; }
+
+/* KPIs */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 36px;
+}
+.kpi {
+  background: var(--bg-2);
+  padding: 20px 24px;
+  text-align: center;
+}
+.kpi-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--txt-mute);
+  margin-bottom: 6px;
+}
+.kpi-val {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.kpi-sub {
+  font-size: 11px;
+  color: var(--txt-dim);
+  margin-top: 4px;
+}
+.kpi-val.accent { color: var(--accent); }
+.kpi-val.falta { color: var(--falta); }
+.kpi-val.sobra { color: var(--sobra); }
+
+/* GAUGE */
+.gauge-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 36px;
+}
+.gauge-container {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 28px 48px;
+  text-align: center;
+  min-width: 320px;
+}
+.gauge-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--txt-dim);
+  margin-bottom: 12px;
+}
+.gauge-svg { display: block; margin: 0 auto; }
+.gauge-pct {
+  font-family: 'Fraunces', serif;
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.gauge-label {
+  font-size: 12px;
+  color: var(--txt-dim);
+  margin-top: 8px;
+}
+
+/* SEARCH */
+.search-bar {
+  margin-bottom: 16px;
+}
+.search-bar input {
+  width: 100%;
+  padding: 10px 16px 10px 40px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--txt);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235a6478' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 12px center;
+}
+.search-bar input:focus {
+  border-color: var(--accent);
+}
+.search-bar input::placeholder {
+  color: var(--txt-mute);
+}
+
+/* FILTROS */
+.filtros {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+.filtro-grupo { }
+.section-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.section-title .count {
+  color: var(--txt-mute);
+  font-weight: 400;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-bottom: 4px;
+}
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+  white-space: nowrap;
+  background: var(--bg-3);
+  color: var(--txt-dim);
+  border: 1px solid transparent;
+}
+.chip .tipo {
+  font-size: 9px;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'JetBrains Mono', monospace;
+}
+.chip.active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+.chip.highlight {
+  border: 1px dashed var(--accent-dark);
+  color: var(--accent);
+}
+.chip.highlight:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+.chip .badge {
+  position: absolute;
+  top: -6px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  background: var(--accent);
+  color: var(--bg);
+  border: 1.5px solid var(--bg);
+  font-family: 'JetBrains Mono', monospace;
+}
+.chip .share-dot {
+  position: absolute;
+  top: -3px;
+  left: -2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sobra);
+  border: 1.5px solid var(--bg);
+}
+
+/* RESULT BAR */
+.result-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 24px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.summary {
+  font-size: 13px;
+  color: var(--txt-dim);
+}
+.summary em {
+  color: var(--accent);
+  font-style: italic;
+  font-family: 'Fraunces', serif;
+  font-size: 15px;
+}
+.nums {
+  display: flex;
+  gap: 24px;
+}
+.num-block { text-align: center; }
+.num-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--txt-mute);
+}
+.num-val {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 700;
+}
+.num-val.sobra { color: var(--sobra); }
+.num-val.falta { color: var(--falta); }
+
+/* GRAPHS SECTION */
+.graficos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+.grafico-card {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+}
+.grafico-card.full { grid-column: 1 / -1; }
+.grafico-titulo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--txt-dim);
+  margin-bottom: 16px;
+}
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+.bar-label {
+  min-width: 140px;
+  max-width: 200px;
+  text-align: right;
+  color: var(--txt-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.bar-track {
+  flex: 1;
+  height: 18px;
+  background: var(--bg-3);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+  min-width: 2px;
+}
+.bar-fill.falta-fill { background: linear-gradient(90deg, var(--falta), #ff6b8a); }
+.bar-fill.sobra-fill { background: linear-gradient(90deg, var(--sobra), #34d399); }
+.bar-fill.accent-fill { background: linear-gradient(90deg, var(--accent-dark), var(--accent)); }
+.bar-fill.blue-fill { background: linear-gradient(90deg, #2a6db5, #4da6ff); }
+.bar-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  min-width: 60px;
+  text-align: right;
+  color: var(--txt);
+}
+
+/* STACKED BAR for colecao */
+.stacked-bar {
+  display: flex;
+  height: 22px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.stacked-bar .seg {
+  height: 100%;
+  transition: width 0.4s;
+}
+.stacked-bar .seg.sobra-seg { background: var(--sobra); }
+.stacked-bar .seg.falta-seg { background: var(--falta); }
+.stacked-legend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--txt-dim);
+  margin-bottom: 8px;
+}
+
+/* MINI CARDS COLEÇÃO */
+.colecao-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.col-card {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.col-card:hover {
+  border-color: var(--accent-dark);
+  transform: translateY(-1px);
+}
+.col-card-name {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.col-card-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--txt-dim);
+  margin-bottom: 3px;
+}
+.col-card-row span:last-child {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+}
+.col-card-row span.falta-val { color: var(--falta); }
+.col-card-row span.sobra-val { color: var(--sobra); }
+.col-card-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--bg-4);
+  margin-top: 8px;
+  overflow: hidden;
+}
+.col-card-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+/* TABLE */
+.tabela-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--bg-3);
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--txt-dim);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  border-bottom: 2px solid var(--line);
+}
+thead th.sorted { color: var(--accent); }
+thead th .arrow {
+  font-size: 8px;
+  margin-left: 4px;
+  opacity: 0.4;
+}
+thead th.sorted .arrow { opacity: 1; color: var(--accent); }
+thead th.num { text-align: right; }
+
+tbody tr {
+  border-bottom: 1px solid var(--line);
+  transition: background 0.1s;
+}
+tbody tr:hover { background: var(--bg-2); }
+tbody tr.critico { background: rgba(244, 63, 94, 0.06); }
+tbody tr.critico:hover { background: rgba(244, 63, 94, 0.12); }
+td { padding: 10px 12px; vertical-align: middle; }
+td.num { text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+td.desc { max-width: 280px; font-size: 12px; }
+.cod { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--txt-dim); }
+.colec-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--bg-4);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.fs.neg { color: var(--falta); font-weight: 600; }
+.fs.pos { color: var(--sobra); }
+.sug { color: var(--warn); }
+.def-prod { color: var(--accent-bright); }
+
+/* PROGRESS BAR in table */
+.prog-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.prog-bar {
+  width: 50px;
+  height: 6px;
+  background: var(--bg-4);
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.prog-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+.prog-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  min-width: 35px;
+  text-align: right;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.status-pill.falta {
+  background: var(--falta-bg);
+  color: var(--falta);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+.status-pill.sobra {
+  background: var(--sobra-bg);
+  color: var(--sobra);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* EXPANDABLE ROW */
+.expand-btn {
+  cursor: pointer;
+  font-size: 10px;
+  color: var(--txt-mute);
+  transition: transform 0.2s;
+  display: inline-block;
+  width: 16px;
+  text-align: center;
+}
+.expand-btn.open { transform: rotate(90deg); color: var(--accent); }
+.expand-row { display: none; }
+.expand-row.show { display: table-row; }
+.expand-row td {
+  padding: 8px 12px 12px 40px;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--line);
+}
+.expand-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.muni-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  background: var(--bg-3);
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--txt-dim);
+}
+.muni-tag .muni-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  color: var(--txt);
+}
+
+/* TFOOT */
+tfoot tr {
+  background: var(--bg-3);
+  font-weight: 700;
+  border-top: 2px solid var(--line-2);
+}
+tfoot td {
+  padding: 10px 12px;
+  font-size: 12px;
+}
+tfoot td.num {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--txt-mute);
+  font-size: 15px;
+}
+
+/* SECTION TOGGLE */
+.section-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  user-select: none;
+}
+.section-toggle h2 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.section-toggle .toggle-arrow {
+  font-size: 10px;
+  color: var(--accent);
+  transition: transform 0.2s;
+}
+.section-toggle.collapsed .toggle-arrow { transform: rotate(-90deg); }
+.section-collapsible { overflow: hidden; transition: max-height 0.3s ease; }
+.section-collapsible.collapsed { max-height: 0 !important; }
+
+/* PRINT */
+@media print {
+  body { background: white; color: #1a1a1a; }
+  .app { padding: 20px; max-width: 100%; }
+  .filtros, .search-bar, .chip, .expand-btn, .section-toggle { display: none !important; }
+  .kpis { border: 1px solid #ddd; }
+  .kpi { background: #f8f8f8; border: 1px solid #eee; }
+  .kpi-val { color: #1a1a1a; }
+  .kpi-val.accent { color: #b8860b; }
+  .kpi-val.falta { color: #c0392b; }
+  .kpi-val.sobra { color: #27ae60; }
+  table { font-size: 10px; }
+  .tabela-wrap { border: 1px solid #ddd; }
+  thead th { background: #f0f0f0; color: #333; }
+  tbody tr { border-bottom: 1px solid #eee; }
+  .grafico-card { border: 1px solid #ddd; background: white; break-inside: avoid; }
+  .colec-tag { background: #f0f0f0; }
+  .status-pill.falta { background: #fee; color: #c0392b; }
+  .status-pill.sobra { background: #efe; color: #27ae60; }
+  .gauge-container { border: 1px solid #ddd; background: #f8f8f8; }
+  .col-card { border: 1px solid #ddd; background: #f8f8f8; break-inside: avoid; }
+  .result-bar { background: #f8f8f8; border: 1px solid #ddd; }
+  .bar-track { background: #e0e0e0; }
+  .print-btn { display: none; }
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-dark); }
+
+/* PRINT BUTTON */
+.print-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 10px 20px;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 100;
+  transition: transform 0.15s;
+}
+.print-btn:hover { transform: translateY(-2px); }
+
+/* THEME TOGGLE */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--txt-dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  margin-bottom: 4px;
+}
+.theme-toggle:hover { border-color: var(--accent-dark); color: var(--accent); }
+.theme-icon { font-size: 14px; }
+
+/* LIGHT THEME */
+html.light {
+  --bg: #f4f5f7;
+  --bg-2: #ffffff;
+  --bg-3: #ebedf0;
+  --bg-4: #dfe1e6;
+  --line: #d0d4db;
+  --line-2: #c1c7d0;
+  --txt: #172b4d;
+  --txt-dim: #5e6c84;
+  --txt-mute: #8993a4;
+  --accent: #b8760a;
+  --accent-bright: #d4910e;
+  --accent-dark: #8a5d08;
+  --falta: #de350b;
+  --falta-bg: rgba(222, 53, 11, 0.08);
+  --sobra: #00875a;
+  --sobra-bg: rgba(0, 135, 90, 0.08);
+  --warn: #ff8b00;
+}
+html.light body {
+  background: var(--bg);
+}
+html.light .chip.active {
+  color: #fff;
+}
+html.light .print-btn {
+  color: #fff;
+}
+
+/* PENDENCIAS PANEL */
+.pendencias {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 28px;
+}
+.pend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+.pend-card {
+  background: var(--bg-3);
+  border-radius: 10px;
+  padding: 16px;
+  border-left: 4px solid var(--falta);
+}
+.pend-card.warn { border-left-color: var(--warn); }
+.pend-card.info { border-left-color: var(--accent); }
+.pend-card-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--txt-dim);
+  margin-bottom: 8px;
+}
+.pend-card-val {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.pend-card-val.falta { color: var(--falta); }
+.pend-card-val.warn { color: var(--warn); }
+.pend-card-val.info { color: var(--accent); }
+.pend-card-sub {
+  font-size: 11px;
+  color: var(--txt-dim);
+}
+.pend-list {
+  margin-top: 8px;
+  max-height: 120px;
+  overflow-y: auto;
+  font-size: 11px;
+}
+.pend-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--txt-dim);
+}
+.pend-item:last-child { border: none; }
+.pend-item .pend-cod { font-family: 'JetBrains Mono', monospace; color: var(--txt); }
+.pend-item .pend-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+/* ALERT ICON in table */
+.alert-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--warn);
+  color: var(--bg);
+  font-size: 10px;
+  font-weight: 900;
+  margin-left: 4px;
+  cursor: help;
+  vertical-align: middle;
+}
+.alert-icon.danger {
+  background: var(--falta);
+}
+
+/* COMPARATIVO BAR */
+.comp-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+  font-size: 11px;
+}
+.comp-label {
+  min-width: 60px;
+  text-align: right;
+  color: var(--txt-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+}
+.comp-bar-track {
+  flex: 1;
+  height: 10px;
+  background: var(--bg-3);
+  border-radius: 3px;
+  position: relative;
+  overflow: visible;
+}
+.comp-bar-sug {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--warn);
+  border-radius: 3px;
+  opacity: 0.7;
+}
+.comp-bar-def {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+}
+.comp-vals {
+  min-width: 100px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  display: flex;
+  gap: 8px;
+}
+.comp-vals .sug-v { color: var(--warn); }
+.comp-vals .def-v { color: var(--accent); }
+
+/* SIMULADOR "E SE?" */
+.simulador {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 28px;
+}
+.sim-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.sim-header label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--txt-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.sim-select {
+  padding: 7px 12px;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--txt);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  min-width: 200px;
+  cursor: pointer;
+}
+.sim-select:focus { border-color: var(--accent); }
+.sim-select option { background: var(--bg-2); color: var(--txt); }
+.sim-btn {
+  padding: 7px 16px;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.sim-btn:hover { opacity: 0.85; }
+.sim-btn.danger { background: var(--falta); }
+.sim-result {
+  margin-top: 12px;
+}
+.sim-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+.sim-card {
+  background: var(--bg-3);
+  border-radius: 8px;
+  padding: 12px;
+  border-left: 3px solid var(--line);
+}
+.sim-card.impacto-neg { border-left-color: var(--falta); }
+.sim-card.impacto-pos { border-left-color: var(--sobra); }
+.sim-card-label {
+  font-size: 10px;
+  color: var(--txt-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 4px;
+}
+.sim-card-val {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 700;
+}
+.sim-card-delta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  margin-top: 2px;
+}
+.sim-table {
+  width: 100%;
+  margin-top: 12px;
+  font-size: 12px;
+  border-collapse: collapse;
+}
+.sim-table th {
+  text-align: left;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--txt-mute);
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--line);
+  font-family: 'JetBrains Mono', monospace;
+}
+.sim-table td {
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--line);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+}
+.sim-table .delta-neg { color: var(--falta); font-weight: 600; }
+.sim-table .delta-pos { color: var(--sobra); }
+
+/* ACTION BUTTONS BAR */
+.action-bar {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+}
+.action-btn {
+  padding: 10px 18px;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transition: transform 0.15s;
+  white-space: nowrap;
+}
+.action-btn:hover { transform: translateY(-2px); }
+.action-btn.secondary {
+  background: var(--bg-3);
+  color: var(--accent);
+  border: 1px solid var(--accent-dark);
+}
+
+/* MUNICIPALITY REPORT MODAL */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 200;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px;
+  overflow-y: auto;
+}
+.modal-overlay.show { display: flex; }
+.modal-content {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 900px;
+  width: 100%;
+  position: relative;
+}
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--txt-mute);
+  font-size: 24px;
+  cursor: pointer;
+}
+.modal-close:hover { color: var(--txt); }
+.report-header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--accent);
+}
+.report-header h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+.report-header .rpt-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--txt-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.report-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.rpt-kpi {
+  text-align: center;
+  padding: 12px;
+  background: var(--bg-2);
+  border-radius: 8px;
+}
+.rpt-kpi-val {
+  font-family: 'Fraunces', serif;
+  font-size: 24px;
+  font-weight: 700;
+}
+.rpt-kpi-label {
+  font-size: 10px;
+  color: var(--txt-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: 'JetBrains Mono', monospace;
+}
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.report-table th {
+  text-align: left;
+  padding: 8px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--txt-dim);
+  border-bottom: 2px solid var(--line);
+  font-family: 'JetBrains Mono', monospace;
+}
+.report-table td {
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--line);
+}
+.report-table .num { text-align: right; font-family: 'JetBrains Mono', monospace; }
+.report-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+@media print {
+  .modal-overlay { display: none !important; }
+  .action-bar { display: none !important; }
+  .simulador { break-inside: avoid; }
+}
+
+/* MAPA */
+.mapa-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+.mapa-card {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+}
+.mapa-svg-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 320px;
+}
+.mapa-svg-wrap svg { max-width: 100%; height: auto; }
+.mapa-svg-wrap svg path {
+  stroke: var(--line);
+  stroke-width: 0.5;
+  cursor: pointer;
+  transition: opacity 0.15s, filter 0.15s;
+}
+.mapa-svg-wrap svg path:hover {
+  opacity: 0.8;
+  filter: brightness(1.3);
+}
+.mapa-legend {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+  font-size: 10px;
+  color: var(--txt-dim);
+}
+.mapa-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.mapa-legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+.estado-rank {
+  max-height: 380px;
+  overflow-y: auto;
+}
+.estado-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  transition: background 0.1s;
+  padding-left: 4px;
+  border-radius: 4px;
+}
+.estado-row:hover { background: var(--bg-3); }
+.estado-uf {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 28px;
+  color: var(--accent);
+}
+.estado-bar-track {
+  flex: 1;
+  height: 12px;
+  background: var(--bg-4);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.estado-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s;
+}
+.estado-info {
+  text-align: right;
+  min-width: 80px;
+}
+.estado-dem {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+}
+.estado-muns {
+  font-size: 10px;
+  color: var(--txt-mute);
+}
+
+/* TIMELINE */
+.timeline-wrap {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 28px;
+}
+.timeline {
+  position: relative;
+  padding-left: 24px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--line);
+}
+.tl-item {
+  position: relative;
+  padding: 12px 0 12px 20px;
+  border-bottom: 1px solid var(--line);
+}
+.tl-item:last-child { border: none; }
+.tl-dot {
+  position: absolute;
+  left: -20px;
+  top: 16px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg-2);
+}
+.tl-dot.falta { background: var(--falta); }
+.tl-dot.sobra { background: var(--sobra); }
+.tl-dot.warn { background: var(--warn); }
+.tl-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.tl-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+.tl-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--txt-mute);
+}
+.tl-desc {
+  font-size: 12px;
+  color: var(--txt-dim);
+}
+.tl-tags {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+.tl-tag {
+  padding: 2px 8px;
+  background: var(--bg-3);
+  border-radius: 4px;
+  font-size: 10px;
+  color: var(--txt-dim);
+}
+
+@media (max-width: 1100px) {
+  .mapa-section { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 1100px) {
+  .app { padding: 20px 16px 60px; }
+  .brand h1 { font-size: 28px; }
+  .kpis { grid-template-columns: repeat(3, 1fr); }
+  .filtros { grid-template-columns: 1fr; gap: 16px; }
+  .graficos { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header>
+  <div class="brand">
+    <div class="label">Instituto IPDH · Logística 2026</div>
+    <h1>Dashboard de <em>Demanda</em></h1>
+  </div>
+  <div class="meta">
+    <div class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">
+      <span class="theme-icon" id="theme-icon">☀</span> <span id="theme-label">CLARO</span>
+    </div>
+    <div id="hoje"></div>
+    <div>v5.0 · <span id="meta-count"></span> itens</div>
+  </div>
+</header>
+
+<div class="kpis" id="kpis"></div>
+
+<!-- GAUGE COBERTURA -->
+<div class="gauge-wrap" id="gauge-wrap"></div>
+
+<!-- PAINEL DE PENDÊNCIAS -->
+<div class="section-toggle" id="toggle-pendencias" onclick="toggleSection('pendencias')">
+  <span class="toggle-arrow">▶</span>
+  <h2>Painel de Pendências</h2>
+</div>
+<div class="section-collapsible" id="section-pendencias">
+  <div class="pendencias" id="pendencias-area"></div>
+</div>
+
+<!-- BUSCA -->
+<div class="search-bar">
+  <input type="text" id="search-input" placeholder="Buscar por código ou descrição...">
+</div>
+
+<div class="filtros">
+  <div class="filtro-grupo">
+    <div class="section-title">Município <span class="count" id="cnt-mun"></span></div>
+    <div class="chips" id="chips-mun"></div>
+  </div>
+  <div class="filtro-grupo">
+    <div class="section-title">Coleção <span class="count" id="cnt-col"></span></div>
+    <div class="chips" id="chips-col"></div>
+  </div>
+</div>
+
+<!-- MINI CARDS COLEÇÃO -->
+<div class="section-toggle" id="toggle-cards" onclick="toggleSection('cards')">
+  <span class="toggle-arrow">▶</span>
+  <h2>Resumo por Coleção</h2>
+</div>
+<div class="section-collapsible" id="section-cards">
+  <div class="colecao-cards" id="colecao-cards"></div>
+</div>
+
+<!-- GRÁFICOS -->
+<div class="section-toggle" id="toggle-graficos" onclick="toggleSection('graficos')">
+  <span class="toggle-arrow">▶</span>
+  <h2>Gráficos Analíticos</h2>
+</div>
+<div class="section-collapsible" id="section-graficos">
+  <div class="graficos" id="graficos-area"></div>
+</div>
+
+<!-- COMPARATIVO SUGESTÃO vs DEF. PRODUÇÃO -->
+<div class="section-toggle" id="toggle-comparativo" onclick="toggleSection('comparativo')">
+  <span class="toggle-arrow">▶</span>
+  <h2>Sugestão vs Definição de Produção</h2>
+</div>
+<div class="section-collapsible" id="section-comparativo">
+  <div class="grafico-card" id="comparativo-area" style="margin-bottom:28px"></div>
+</div>
+
+<!-- MAPA DO BRASIL -->
+<div class="section-toggle" id="toggle-mapa" onclick="toggleSection('mapa')">
+  <span class="toggle-arrow">▶</span>
+  <h2>Mapa de Demanda por Estado</h2>
+</div>
+<div class="section-collapsible" id="section-mapa">
+  <div class="mapa-section" id="mapa-area"></div>
+</div>
+
+<!-- TIMELINE -->
+<div class="section-toggle" id="toggle-timeline" onclick="toggleSection('timeline')">
+  <span class="toggle-arrow">▶</span>
+  <h2>Linha do Tempo — Marcos Operacionais</h2>
+</div>
+<div class="section-collapsible" id="section-timeline">
+  <div class="timeline-wrap" id="timeline-area"></div>
+</div>
+
+<!-- SIMULADOR "E SE?" -->
+<div class="section-toggle" id="toggle-simulador" onclick="toggleSection('simulador')">
+  <span class="toggle-arrow">▶</span>
+  <h2>Simulador "E se?"</h2>
+</div>
+<div class="section-collapsible" id="section-simulador">
+  <div class="simulador" id="simulador-area">
+    <div class="sim-header">
+      <label>Adicionar município:</label>
+      <select class="sim-select" id="sim-mun-select">
+        <option value="">— Selecione um município —</option>
+      </select>
+      <button class="sim-btn" onclick="simularMunicipio()">Simular</button>
+      <button class="sim-btn danger" onclick="limparSimulacao()" id="sim-clear" style="display:none">Limpar</button>
+    </div>
+    <div class="sim-result" id="sim-result"></div>
+  </div>
+</div>
+
+<div class="result-bar">
+  <div class="summary" id="summary-text">Carregando…</div>
+  <div class="nums" id="result-nums"></div>
+</div>
+
+<div class="tabela-wrap">
+  <table id="tabela">
+    <thead>
+      <tr>
+        <th style="width:24px"></th>
+        <th data-k="cod">Código</th>
+        <th data-k="desc">Descrição</th>
+        <th data-k="colec">Coleção</th>
+        <th data-k="dem_filtrada" class="num">Qtde Saída</th>
+        <th data-k="saldo" class="num">Saldo</th>
+        <th data-k="producao" class="num">Produção</th>
+        <th data-k="saldo_prod" class="num">Saldo+Prod</th>
+        <th data-k="cobertura" class="num">Cobertura</th>
+        <th data-k="falta_sobra" class="num">Falta/Sobra</th>
+        <th data-k="sugestao" class="num">Sugestão</th>
+        <th data-k="def_prod" class="num">Def. Produção</th>
+        <th data-k="status">Status</th>
+      </tr>
+    </thead>
+    <tbody id="corpo"></tbody>
+    <tfoot id="rodape"></tfoot>
+  </table>
+</div>
+
+</div>
+
+<!-- MODAL RELATÓRIO MUNICÍPIO -->
+<div class="modal-overlay" id="modal-report">
+  <div class="modal-content" id="modal-report-content">
+    <button class="modal-close" onclick="closeReport()">&times;</button>
+    <div id="report-body"></div>
+  </div>
+</div>
+
+<!-- ACTION BUTTONS -->
+<div class="action-bar">
+  <button class="action-btn" onclick="printReport()">⎙ Imprimir</button>
+  <button class="action-btn secondary" onclick="exportCSV()">↓ Exportar CSV</button>
+  <button class="action-btn secondary" onclick="openReportSelector()">📄 Relatório Município</button>
+</div>
+
+
+<script>
+const DADOS = {"produtos":[{"cod":"5310","desc":"INT.E BRINCADEIRAS 2020 INF.2 - ALUNO","colec":"INT. E BRINCADEIRAS","qtde_total":3083,"saldo":1111,"saidas":35032,"producao":3000,"saldo_prod":4111,"falta_sobra":1028,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Santana do Ipanema (AL)":300,"Granja (CE)":770,"Pacoti (CE)":107,"São Gonçalo do Amarante (CE)":496,"Bayeux (PB)":230,"Espírito Santo (RN)":70,"São Pedro  (RN)":50,"Parnamirim (RN)":1060}},{"cod":"5100","desc":"INT.E BRINCADEIRAS 2020 INF.3 VL.1 - ALUNO","colec":"INT. E BRINCADEIRAS","qtde_total":4858,"saldo":2372,"saidas":60387,"producao":3000,"saldo_prod":5372,"falta_sobra":514,"status":"Sobra","sugestao":"600","def_prod":0,"demandas":{"Santana do Ipanema (AL)":600,"Granja (CE)":1330,"Pacoti (CE)":142,"São Gonçalo do Amarante (CE)":746,"Bayeux (PB)":200,"Espírito Santo (RN)":100,"São Pedro  (RN)":70,"Parnamirim (RN)":1170,"Araucaju (SE)":500}},{"cod":"7927","desc":"INT.E BRINCADEIRAS 2020 INF.3 VL.2 - ALUNO (novo)","colec":"INT. E BRINCADEIRAS","qtde_total":4858,"saldo":2688,"saidas":28312,"producao":3000,"saldo_prod":5688,"falta_sobra":830,"status":"Sobra","sugestao":"1000","def_prod":0,"demandas":{"Santana do Ipanema (AL)":600,"Granja (CE)":1330,"Pacoti (CE)":142,"São Gonçalo do Amarante (CE)":746,"Bayeux (PB)":200,"Espírito Santo (RN)":100,"São Pedro  (RN)":70,"Parnamirim (RN)":1170,"Araucaju (SE)":500}},{"cod":"5101","desc":"INT.E BRINCADEIRAS 2020 INF.4 VL.1 - ALUNO","colec":"INT. E BRINCADEIRAS","qtde_total":9558,"saldo":3816,"saidas":82789,"producao":3000,"saldo_prod":6816,"falta_sobra":-2742,"status":"Falta","sugestao":"2800","def_prod":0,"demandas":{"Santana do Ipanema (AL)":600,"Palmácia (CE)":20,"Granja (CE)":1500,"Pacoti (CE)":115,"São Gonçalo do Amarante (CE)":842,"Vargem Alta (ES)":226,"Bayeux (PB)":260,"Espírito Santo (RN)":100,"São Pedro  (RN)":80,"Tucano (BA)":620,"Sinop (MT)":2970,"Parnamirim (RN)":1675,"Araucaju (SE)":550}},{"cod":"5369","desc":"INT.E BRINCADEIRAS 2020 INF.4 VL.2 - ALUNO","colec":"INT. E BRINCADEIRAS","qtde_total":9558,"saldo":3655,"saidas":81851,"producao":3000,"saldo_prod":6655,"falta_sobra":-2903,"status":"Falta","sugestao":"3000","def_prod":0,"demandas":{"Santana do Ipanema (AL)":600,"Palmácia (CE)":20,"Granja (CE)":1500,"Pacoti (CE)":115,"São Gonçalo do Amarante (CE)":842,"Vargem Alta (ES)":226,"Bayeux (PB)":260,"Espírito Santo (RN)":100,"São Pedro  (RN)":80,"Tucano (BA)":620,"Sinop (MT)":2970,"Parnamirim (RN)":1675,"Araucaju (SE)":550}},{"cod":"5102","desc":"INT.E BRINCADEIRAS 2020 INF.5 VL.1 - ALUNO","colec":"INT. E BRINCADEIRAS","qtde_total":10307,"saldo":3092,"saidas":89697,"producao":4000,"saldo_prod":7092,"falta_sobra":-3215,"status":"Falta","sugestao":"3600","def_prod":0,"demandas":{"Santana do Ipanema (AL)":650,"Palmácia (CE)":25,"Granja (CE)":1310,"Pacoti (CE)":175,"São Gonçalo do Amarante (CE)":828,"Vargem Alta (ES)":259,"Bayeux (PB)":520,"Espírito Santo (RN)":130,"São Pedro  (RN)":100,"Tucano (BA)":790,"Sinop (MT)":3080,"Parnamirim (RN)":1890,"Araucaju (SE)":550}},{"cod":"5370","desc":"INT.E BRINCADEIRAS 2020 INF.5 VL.2 - ALUNO","colec":"INT. E BRINCADEIRAS","qtde_total":10307,"saldo":2974,"saidas":91171,"producao":4000,"saldo_prod":6974,"falta_sobra":-3333,"status":"Falta","sugestao":"3700","def_prod":0,"demandas":{"Santana do Ipanema (AL)":650,"Palmácia (CE)":25,"Granja (CE)":1310,"Pacoti (CE)":175,"São Gonçalo do Amarante (CE)":828,"Vargem Alta (ES)":259,"Bayeux (PB)":520,"Espírito Santo (RN)":130,"São Pedro  (RN)":100,"Tucano (BA)":790,"Sinop (MT)":3080,"Parnamirim (RN)":1890,"Araucaju (SE)":550}},{"cod":"7290","desc":"AGENDA ESCOLAR EDIÇÕES IPDH - ALUNO","colec":"INT. E BRINCADEIRAS","qtde_total":28006,"saldo":4483,"saidas":148178,"producao":10000,"saldo_prod":14483,"falta_sobra":-13523,"status":"Falta","sugestao":"14900","def_prod":0,"demandas":{"Santana do Ipanema (AL)":2150,"Palmácia (CE)":45,"Granja (CE)":4910,"Pacoti (CE)":539,"São Gonçalo do Amarante (CE)":2912,"Vargem Alta (ES)":485,"Bayeux (PB)":1210,"Espírito Santo (RN)":600,"São Pedro  (RN)":300,"Tucano (BA)":1410,"Sinop (MT)":6050,"Parnamirim (RN)":5795,"Araucaju (SE)":1600}},{"cod":"5444","desc":"INT.E BRINCADEIRAS 2020 INF.2 - PROFº","colec":"INT. E BRINCADEIRAS","qtde_total":274,"saldo":225,"saidas":2998,"producao":400,"saldo_prod":625,"falta_sobra":351,"status":"Sobra","sugestao":"400","def_prod":0,"demandas":{"Santana do Ipanema (AL)":25,"Granja (CE)":61,"São Gonçalo do Amarante (CE)":72,"Bayeux (PB)":20,"Espírito Santo (RN)":9,"São Pedro  (RN)":8,"Parnamirim (RN)":79}},{"cod":"5392","desc":"INT.E BRINCADEIRAS 2020 INF.3 VL.1 - PROFº","colec":"INT. E BRINCADEIRAS","qtde_total":430,"saldo":319,"saidas":6284,"producao":0,"saldo_prod":319,"falta_sobra":-111,"status":"Falta","sugestao":"200","def_prod":0,"demandas":{"Santana do Ipanema (AL)":50,"Granja (CE)":106,"São Gonçalo do Amarante (CE)":100,"Bayeux (PB)":40,"Espírito Santo (RN)":18,"São Pedro  (RN)":9,"Parnamirim (RN)":87,"Araucaju (SE)":20}},{"cod":"7925","desc":"INT.E BRINCADEIRAS 2020 INF.3 VL.2 - PROFº (novo)","colec":"INT. E BRINCADEIRAS","qtde_total":430,"saldo":368,"saidas":4757,"producao":0,"saldo_prod":368,"falta_sobra":-62,"status":"Falta","sugestao":"100","def_prod":0,"demandas":{"Santana do Ipanema (AL)":50,"Granja (CE)":106,"São Gonçalo do Amarante (CE)":100,"Bayeux (PB)":40,"Espírito Santo (RN)":18,"São Pedro  (RN)":9,"Parnamirim (RN)":87,"Araucaju (SE)":20}},{"cod":"5393","desc":"INT.E BRINCADEIRAS 2020 INF.4 VL.1 - PROFº","colec":"INT. E BRINCADEIRAS","qtde_total":772,"saldo":1226,"saidas":7343,"producao":0,"saldo_prod":1226,"falta_sobra":454,"status":"Sobra","sugestao":"600","def_prod":0,"demandas":{"Santana do Ipanema (AL)":50,"Palmácia (CE)":2,"Granja (CE)":119,"São Gonçalo do Amarante (CE)":113,"Vargem Alta (ES)":20,"Bayeux (PB)":60,"Espírito Santo (RN)":18,"São Pedro  (RN)":10,"Tucano (BA)":50,"Sinop (MT)":186,"Parnamirim (RN)":124,"Araucaju (SE)":20}},{"cod":"5441","desc":"INT.E BRINCADEIRAS 2020 INF.4 VL.2 - PROFº","colec":"INT. E BRINCADEIRAS","qtde_total":772,"saldo":1220,"saidas":7616,"producao":0,"saldo_prod":1220,"falta_sobra":448,"status":"Sobra","sugestao":"600","def_prod":0,"demandas":{"Santana do Ipanema (AL)":50,"Palmácia (CE)":2,"Granja (CE)":119,"São Gonçalo do Amarante (CE)":113,"Vargem Alta (ES)":20,"Bayeux (PB)":60,"Espírito Santo (RN)":18,"São Pedro  (RN)":10,"Tucano (BA)":50,"Sinop (MT)":186,"Parnamirim (RN)":124,"Araucaju (SE)":20}},{"cod":"5443","desc":"INT.E BRINCADEIRAS 2020 INF.5 VL.1 - PROFº","colec":"INT. E BRINCADEIRAS","qtde_total":867,"saldo":1042,"saidas":8269,"producao":0,"saldo_prod":1042,"falta_sobra":175,"status":"Sobra","sugestao":"200","def_prod":0,"demandas":{"Santana do Ipanema (AL)":55,"Palmácia (CE)":2,"Granja (CE)":104,"São Gonçalo do Amarante (CE)":115,"Vargem Alta (ES)":25,"Bayeux (PB)":100,"Espírito Santo (RN)":25,"São Pedro  (RN)":13,"Tucano (BA)":75,"Sinop (MT)":193,"Parnamirim (RN)":140,"Araucaju (SE)":20}},{"cod":"5606","desc":"INT.E BRINCADEIRAS 2020 INF.5 VL.2 - PROFº","colec":"INT. E BRINCADEIRAS","qtde_total":867,"saldo":1104,"saidas":7963,"producao":0,"saldo_prod":1104,"falta_sobra":237,"status":"Sobra","sugestao":"300","def_prod":0,"demandas":{"Santana do Ipanema (AL)":55,"Palmácia (CE)":2,"Granja (CE)":104,"São Gonçalo do Amarante (CE)":115,"Vargem Alta (ES)":25,"Bayeux (PB)":100,"Espírito Santo (RN)":25,"São Pedro  (RN)":13,"Tucano (BA)":75,"Sinop (MT)":193,"Parnamirim (RN)":140,"Araucaju (SE)":20}},{"cod":"5454","desc":"KIT FRASES INF.2 INT.E BRINC.(08 CART+ALFA+NUMEROS)","colec":"INT. E BRINCADEIRAS","qtde_total":274,"saldo":363,"saidas":2340,"producao":400,"saldo_prod":763,"falta_sobra":489,"status":"Sobra","sugestao":"600","def_prod":0,"demandas":{"Santana do Ipanema (AL)":25,"Granja (CE)":61,"São Gonçalo do Amarante (CE)":72,"Bayeux (PB)":20,"Espírito Santo (RN)":9,"São Pedro  (RN)":8,"Parnamirim (RN)":79}},{"cod":"5455","desc":"KIT FRASES INF.3 INT.E BRINC.(08 CART+ALFA+NUMEROS)","colec":"INT. E BRINCADEIRAS","qtde_total":430,"saldo":466,"saidas":3786,"producao":0,"saldo_prod":466,"falta_sobra":36,"status":"Sobra","sugestao":"100","def_prod":0,"demandas":{"Santana do Ipanema (AL)":50,"Granja (CE)":106,"São Gonçalo do Amarante (CE)":100,"Bayeux (PB)":40,"Espírito Santo (RN)":18,"São Pedro  (RN)":9,"Parnamirim (RN)":87,"Araucaju (SE)":20}},{"cod":"5456","desc":"KIT FRASES INF.4 INT.E BRINC.(08 CART+ALFA+NUMEROS)","colec":"INT. E BRINCADEIRAS","qtde_total":772,"saldo":553,"saidas":5577,"producao":600,"saldo_prod":1153,"falta_sobra":381,"status":"Sobra","sugestao":"500","def_prod":0,"demandas":{"Santana do Ipanema (AL)":50,"Palmácia (CE)":2,"Granja (CE)":119,"São Gonçalo do Amarante (CE)":113,"Vargem Alta (ES)":20,"Bayeux (PB)":60,"Espírito Santo (RN)":18,"São Pedro  (RN)":10,"Tucano (BA)":50,"Sinop (MT)":186,"Parnamirim (RN)":124,"Araucaju (SE)":20}},{"cod":"5457","desc":"KIT FRASES INF.5 INT.E BRINC.(08 CART+ALFA+NUMEROS)","colec":"INT. E BRINCADEIRAS","qtde_total":867,"saldo":345,"saidas":6273,"producao":700,"saldo_prod":1045,"falta_sobra":178,"status":"Sobra","sugestao":"200","def_prod":0,"demandas":{"Santana do Ipanema (AL)":55,"Palmácia (CE)":2,"Granja (CE)":104,"São Gonçalo do Amarante (CE)":115,"Vargem Alta (ES)":25,"Bayeux (PB)":100,"Espírito Santo (RN)":25,"São Pedro  (RN)":13,"Tucano (BA)":75,"Sinop (MT)":193,"Parnamirim (RN)":140,"Araucaju (SE)":20}},{"cod":"5371","desc":"PROPOSTA PEDAGÓGICA INT. E BRINCADEIRA 2020","colec":"INT. E BRINCADEIRAS","qtde_total":2407,"saldo":3707,"saidas":18697,"producao":0,"saldo_prod":3707,"falta_sobra":1300,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Santana do Ipanema (AL)":180,"Palmácia (CE)":4,"Granja (CE)":390,"Pacoti (CE)":64,"São Gonçalo do Amarante (CE)":400,"Vargem Alta (ES)":45,"Bayeux (PB)":220,"Espírito Santo (RN)":70,"São Pedro  (RN)":40,"Tucano (BA)":125,"Sinop (MT)":379,"Parnamirim (RN)":430,"Araucaju (SE)":60}},{"cod":"6410","desc":"CADERNO DE PLANEJAMENTO 2022","colec":"INT. E BRINCADEIRAS","qtde_total":2407,"saldo":2912,"saidas":18742,"producao":0,"saldo_prod":2912,"falta_sobra":505,"status":"Sobra","sugestao":"600","def_prod":0,"demandas":{"Santana do Ipanema (AL)":180,"Palmácia (CE)":4,"Granja (CE)":390,"Pacoti (CE)":64,"São Gonçalo do Amarante (CE)":400,"Vargem Alta (ES)":45,"Bayeux (PB)":220,"Espírito Santo (RN)":70,"São Pedro  (RN)":40,"Tucano (BA)":125,"Sinop (MT)":379,"Parnamirim (RN)":430,"Araucaju (SE)":60}},{"cod":"5204","desc":"KIT CARDS EDIÇÕES IPDH (Caixa+26 Letras Alfabeto)","colec":"INT. E BRINCADEIRAS","qtde_total":2407,"saldo":3359,"saidas":18551,"producao":0,"saldo_prod":3359,"falta_sobra":952,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Santana do Ipanema (AL)":180,"Palmácia (CE)":4,"Granja (CE)":390,"Pacoti (CE)":64,"São Gonçalo do Amarante (CE)":400,"Vargem Alta (ES)":45,"Bayeux (PB)":220,"Espírito Santo (RN)":70,"São Pedro  (RN)":40,"Tucano (BA)":125,"Sinop (MT)":379,"Parnamirim (RN)":430,"Araucaju (SE)":60}},{"cod":"1000","desc":"BOLSAS EM LONITA","colec":"INT. E BRINCADEIRAS","qtde_total":2407,"saldo":751,"saidas":2801,"producao":856,"saldo_prod":1607,"falta_sobra":-800,"status":"Falta","sugestao":"900","def_prod":0,"demandas":{"Santana do Ipanema (AL)":180,"Palmácia (CE)":4,"Granja (CE)":390,"Pacoti (CE)":64,"São Gonçalo do Amarante (CE)":400,"Vargem Alta (ES)":45,"Bayeux (PB)":220,"Espírito Santo (RN)":70,"São Pedro  (RN)":40,"Tucano (BA)":125,"Sinop (MT)":379,"Parnamirim (RN)":430,"Araucaju (SE)":60}},{"cod":"7920","desc":"CONSTRUINDO VALORES VOL 01 - ALUNO (novo)","colec":"CONST.VALORES","qtde_total":0,"saldo":2536,"saidas":5940,"producao":0,"saldo_prod":2536,"falta_sobra":2536,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"7955","desc":"CONSTRUINDO VALORES VOL 02 - ALUNO (novo)","colec":"CONST.VALORES","qtde_total":0,"saldo":2880,"saidas":6206,"producao":0,"saldo_prod":2880,"falta_sobra":2880,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"7921","desc":"CONSTRUINDO VALORES VOL 03 - ALUNO (novo)","colec":"CONST.VALORES","qtde_total":0,"saldo":2704,"saidas":5719,"producao":0,"saldo_prod":2704,"falta_sobra":2704,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"7956","desc":"CONSTRUINDO VALORES VOL 04 - ALUNO (novo)","colec":"CONST.VALORES","qtde_total":0,"saldo":2827,"saidas":5296,"producao":0,"saldo_prod":2827,"falta_sobra":2827,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"7957","desc":"CONSTRUINDO VALORES VOL 05 - ALUNO (novo)","colec":"CONST.VALORES","qtde_total":760,"saldo":4034,"saidas":4039,"producao":0,"saldo_prod":4034,"falta_sobra":3274,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"São Gonçalo do Amarante (CE)":760}},{"cod":"8443","desc":"CONSTRUINDO VALORES VOL 06 - ALUNO (novo)","colec":"CONST.VALORES","qtde_total":768,"saldo":4825,"saidas":2325,"producao":0,"saldo_prod":4825,"falta_sobra":4057,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"São Gonçalo do Amarante (CE)":768}},{"cod":"9007","desc":"CONSTRUINDO VALORES VOL 07 - ALUNO (novo)","colec":"CONST.VALORES","qtde_total":880,"saldo":10945,"saidas":2305,"producao":0,"saldo_prod":10945,"falta_sobra":10065,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"São Gonçalo do Amarante (CE)":880}},{"cod":"9346","desc":"CONSTRUINDO VALORES VOL 08 - ALUNO (novo)","colec":"CONST.VALORES","qtde_total":744,"saldo":11160,"saidas":720,"producao":0,"saldo_prod":11160,"falta_sobra":10416,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"São Gonçalo do Amarante (CE)":744}},{"cod":"7990","desc":"CONSTRUINDO VALORES VOL 01 - PROFESSOR (novo)","colec":"CONST.VALORES","qtde_total":0,"saldo":892,"saidas":-880,"producao":0,"saldo_prod":892,"falta_sobra":892,"status":"Sobra","sugestao":"1000","def_prod":0,"demandas":{}},{"cod":"7991","desc":"CONSTRUINDO VALORES VOL 02 - PROFESSOR (novo)","colec":"CONST.VALORES","qtde_total":0,"saldo":764,"saidas":-752,"producao":0,"saldo_prod":764,"falta_sobra":764,"status":"Sobra","sugestao":"900","def_prod":0,"demandas":{}},{"cod":"7992","desc":"CONSTRUINDO VALORES VOL 03 - PROFESSOR (novo)","colec":"CONST.VALORES","qtde_total":0,"saldo":851,"saidas":-839,"producao":0,"saldo_prod":851,"falta_sobra":851,"status":"Sobra","sugestao":"1000","def_prod":0,"demandas":{}},{"cod":"7993","desc":"CONSTRUINDO VALORES VOL 04 - PROFESSOR (novo)","colec":"CONST.VALORES","qtde_total":0,"saldo":813,"saidas":-801,"producao":0,"saldo_prod":813,"falta_sobra":813,"status":"Sobra","sugestao":"900","def_prod":0,"demandas":{}},{"cod":"7994","desc":"CONSTRUINDO VALORES VOL 05 - PROFESSOR (novo)","colec":"CONST.VALORES","qtde_total":0,"saldo":1163,"saidas":-1151,"producao":0,"saldo_prod":1163,"falta_sobra":1163,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"8444","desc":"CONSTRUINDO VALORES VOL 06 - PROFESSOR (novo)","colec":"CONST.VALORES","qtde_total":0,"saldo":1210,"saidas":103,"producao":0,"saldo_prod":1210,"falta_sobra":1210,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"9008","desc":"CONSTRUINDO VALORES VOL 07 - PROFESSOR (novo)","colec":"CONST.VALORES","qtde_total":0,"saldo":1302,"saidas":78,"producao":0,"saldo_prod":1302,"falta_sobra":1302,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"9347","desc":"CONSTRUINDO VALORES VOL 08 - PROFESSOR (novo)","colec":"CONST.VALORES","qtde_total":0,"saldo":1182,"saidas":98,"producao":0,"saldo_prod":1182,"falta_sobra":1182,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"6333","desc":"COL SEMEANDO VALORES (08 LIVROS) - ALUNO -","colec":"SEMEANDO VALORES","qtde_total":0,"saldo":1311,"saidas":14755,"producao":0,"saldo_prod":1311,"falta_sobra":1311,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"6460","desc":"CAIXA PORTA LIVROS SEMEANDO VALORES (08 LIVROS)","colec":"SEMEANDO VALORES","qtde_total":1835,"saldo":2612,"saidas":9915,"producao":599,"saldo_prod":3211,"falta_sobra":1376,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":736,"Palmácia (CE)":37,"Fortim (CE)":8,"Bayeux (PB)":589,"Primavera do Leste (MT)":465}},{"cod":"9425","desc":"LV. PARADIDÁTICO COL SEMEANDO VALORES - A ZEBRA ZÉLIA","colec":"SEMEANDO VALORES","qtde_total":1835,"saldo":2586,"saidas":1806,"producao":545,"saldo_prod":3131,"falta_sobra":1296,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":736,"Palmácia (CE)":37,"Fortim (CE)":8,"Bayeux (PB)":589,"Primavera do Leste (MT)":465}},{"cod":"9422","desc":"LV. PARADIDÁTICO COL SEMEANDO VALORES - BALAIO DE GATOS","colec":"SEMEANDO VALORES","qtde_total":1835,"saldo":2554,"saidas":1838,"producao":545,"saldo_prod":3099,"falta_sobra":1264,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":736,"Palmácia (CE)":37,"Fortim (CE)":8,"Bayeux (PB)":589,"Primavera do Leste (MT)":465}},{"cod":"9424","desc":"LV. PARADIDÁTICO COL SEMEANDO VALORES - FESTIVAL DE TALENTOS","colec":"SEMEANDO VALORES","qtde_total":1835,"saldo":2554,"saidas":1838,"producao":538,"saldo_prod":3092,"falta_sobra":1257,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":736,"Palmácia (CE)":37,"Fortim (CE)":8,"Bayeux (PB)":589,"Primavera do Leste (MT)":465}},{"cod":"9408","desc":"LV. PARADIDÁTICO COL SEMEANDO VALORES - MIGA MINHOCA TEIMOSA","colec":"SEMEANDO VALORES","qtde_total":1835,"saldo":2612,"saidas":1780,"producao":540,"saldo_prod":3152,"falta_sobra":1317,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":736,"Palmácia (CE)":37,"Fortim (CE)":8,"Bayeux (PB)":589,"Primavera do Leste (MT)":465}},{"cod":"9423","desc":"LV. PARADIDÁTICO COL SEMEANDO VALORES - SUPERPOC","colec":"SEMEANDO VALORES","qtde_total":1835,"saldo":2586,"saidas":1806,"producao":548,"saldo_prod":3134,"falta_sobra":1299,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":736,"Palmácia (CE)":37,"Fortim (CE)":8,"Bayeux (PB)":589,"Primavera do Leste (MT)":465}},{"cod":"9421","desc":"LV. PARADIDÁTICO COL SEMEANDO VALORES - TECO, O TATUZINHO","colec":"SEMEANDO VALORES","qtde_total":1835,"saldo":2598,"saidas":1794,"producao":543,"saldo_prod":3141,"falta_sobra":1306,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":736,"Palmácia (CE)":37,"Fortim (CE)":8,"Bayeux (PB)":589,"Primavera do Leste (MT)":465}},{"cod":"9409","desc":"LV. PARADIDÁTICO COL SEMEANDO VALORES - UM PEIXINHO DIFERENTE","colec":"SEMEANDO VALORES","qtde_total":1835,"saldo":2574,"saidas":1818,"producao":534,"saldo_prod":3108,"falta_sobra":1273,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":736,"Palmácia (CE)":37,"Fortim (CE)":8,"Bayeux (PB)":589,"Primavera do Leste (MT)":465}},{"cod":"9410","desc":"LV. PARADIDÁTICO COL SEMEANDO VALORES - UM ROBÔ NO CONSERTO","colec":"SEMEANDO VALORES","qtde_total":1835,"saldo":2574,"saidas":1818,"producao":551,"saldo_prod":3125,"falta_sobra":1290,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":736,"Palmácia (CE)":37,"Fortim (CE)":8,"Bayeux (PB)":589,"Primavera do Leste (MT)":465}},{"cod":"7257","desc":"CARTAZES JOGO DA VIDA COL. SEMEANDO VALORES","colec":"SEMEANDO VALORES","qtde_total":1835,"saldo":2612,"saidas":1780,"producao":549,"saldo_prod":3161,"falta_sobra":1326,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":736,"Palmácia (CE)":37,"Fortim (CE)":8,"Bayeux (PB)":589,"Primavera do Leste (MT)":465}},{"cod":"7125","desc":"COL SEMEANDO VALORES (Desenv.Habil.Socioemocionais)","colec":"SEMEANDO VALORES","qtde_total":60,"saldo":273,"saidas":727,"producao":0,"saldo_prod":273,"falta_sobra":213,"status":"Sobra","sugestao":"300","def_prod":0,"demandas":{"Icó (CE)":23,"Palmácia (CE)":2,"Fortim (CE)":1,"Bayeux (PB)":19,"Primavera do Leste (MT)":15}},{"cod":"11561","desc":"LV. PARADIDÁTICO BRINCA AQUI, ALI, ACOLÁ 24 PAG","colec":"DESPERTANDO P/ LEITURA","qtde_total":2146,"saldo":2422,"saidas":322,"producao":0,"saldo_prod":2422,"falta_sobra":276,"status":"Sobra","sugestao":"400","def_prod":0,"demandas":{"Icó (CE)":778,"Fortim (CE)":7,"Bayeux (PB)":720,"Primavera do Leste (MT)":641}},{"cod":"11562","desc":"LV. PARADIDÁTICO TRAVA LÍNGUA","colec":"DESPERTANDO P/ LEITURA","qtde_total":4046,"saldo":2379,"saidas":362,"producao":0,"saldo_prod":2379,"falta_sobra":-1667,"status":"Falta","sugestao":"300","def_prod":0,"demandas":{"Icó (CE)":778,"Fortim (CE)":7,"Bayeux (PB)":720,"Primavera do Leste (MT)":641,"Ipu (CE)":1900}},{"cod":"11563","desc":"LV. PARADIDÁTICO QUEM ADVINHA 32 PAG","colec":"DESPERTANDO P/ LEITURA","qtde_total":4046,"saldo":2656,"saidas":312,"producao":0,"saldo_prod":2656,"falta_sobra":-1390,"status":"Falta","sugestao":"600","def_prod":0,"demandas":{"Icó (CE)":778,"Fortim (CE)":7,"Bayeux (PB)":720,"Primavera do Leste (MT)":641,"Ipu (CE)":1900}},{"cod":"11638","desc":"LV. PARADIDÁTICO O GRANDE DESAFIO 28 PAG","colec":"DESPERTANDO P/ LEITURA","qtde_total":2146,"saldo":2617,"saidas":307,"producao":0,"saldo_prod":2617,"falta_sobra":471,"status":"Sobra","sugestao":"600","def_prod":0,"demandas":{"Icó (CE)":778,"Fortim (CE)":7,"Bayeux (PB)":720,"Primavera do Leste (MT)":641}},{"cod":"11690","desc":"LV. PARADIDÁTICO VOVÓ EDINHA 20 PAG","colec":"LEITURINHAS","qtde_total":4961,"saldo":4552,"saidas":1230,"producao":0,"saldo_prod":4552,"falta_sobra":-409,"status":"Falta","sugestao":"500","def_prod":0,"demandas":{"Icó (CE)":675,"Palmácia (CE)":45,"Macaparana (PE)":600,"Primavera do Leste (MT)":641,"Ipu (CE)":3000}},{"cod":"11691","desc":"LV. PARADIDÁTICO A MENINA E O BEM-TE-VI 20 PAG","colec":"LEITURINHAS","qtde_total":3861,"saldo":4617,"saidas":1220,"producao":0,"saldo_prod":4617,"falta_sobra":756,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":675,"Palmácia (CE)":45,"Macaparana (PE)":600,"Primavera do Leste (MT)":641,"Ipu (CE)":1900}},{"cod":"11692","desc":"LV. PARADIDÁTICO O MENINO QUE CONVERSA COM O VENTO","colec":"LEITURINHAS","qtde_total":3861,"saldo":4663,"saidas":1162,"producao":0,"saldo_prod":4663,"falta_sobra":802,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":675,"Palmácia (CE)":45,"Macaparana (PE)":600,"Primavera do Leste (MT)":641,"Ipu (CE)":1900}},{"cod":"11693","desc":"LV. PARADIDÁTICO A ROUPA DA ZEBRA 20 PAG","colec":"LEITURINHAS","qtde_total":1961,"saldo":4461,"saidas":1220,"producao":0,"saldo_prod":4461,"falta_sobra":2500,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":675,"Palmácia (CE)":45,"Macaparana (PE)":600,"Primavera do Leste (MT)":641}},{"cod":"11694","desc":"LV. PARADIDÁTICO O OVO MUDO 24 PAG","colec":"LEITURINHAS","qtde_total":1961,"saldo":4858,"saidas":1142,"producao":0,"saldo_prod":4858,"falta_sobra":2897,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":675,"Palmácia (CE)":45,"Macaparana (PE)":600,"Primavera do Leste (MT)":641}},{"cod":"11695","desc":"LV. PARADIDÁTICO BODE NOIVO, GALINHA ENCANTADA 28 PAG","colec":"LEITURINHAS","qtde_total":1961,"saldo":4732,"saidas":1205,"producao":0,"saldo_prod":4732,"falta_sobra":2771,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":675,"Palmácia (CE)":45,"Macaparana (PE)":600,"Primavera do Leste (MT)":641}},{"cod":"11696","desc":"LV. PARADIDÁTICO OS DRAGÕES DO CEARÁ 28 PAG","colec":"LEITURINHAS","qtde_total":1961,"saldo":4706,"saidas":1162,"producao":0,"saldo_prod":4706,"falta_sobra":2745,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":675,"Palmácia (CE)":45,"Macaparana (PE)":600,"Primavera do Leste (MT)":641}},{"cod":"11697","desc":"LV. PARADIDÁTICO PAULO, BOLA GABOLA","colec":"LEITURINHAS","qtde_total":1961,"saldo":4604,"saidas":1226,"producao":0,"saldo_prod":4604,"falta_sobra":2643,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":675,"Palmácia (CE)":45,"Macaparana (PE)":600,"Primavera do Leste (MT)":641}},{"cod":"11698","desc":"LV. PARADIDÁTICO CIDADE DE PAPEL","colec":"LEITURINHAS","qtde_total":1961,"saldo":4547,"saidas":1142,"producao":0,"saldo_prod":4547,"falta_sobra":2586,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":675,"Palmácia (CE)":45,"Macaparana (PE)":600,"Primavera do Leste (MT)":641}},{"cod":"11699","desc":"LV. PARADIDÁTICO A CASA NOVA DE CLARA 28 PAG","colec":"LEITURINHAS","qtde_total":1961,"saldo":4633,"saidas":1226,"producao":0,"saldo_prod":4633,"falta_sobra":2672,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":675,"Palmácia (CE)":45,"Macaparana (PE)":600,"Primavera do Leste (MT)":641}},{"cod":"11700","desc":"LV. PARADIDÁTICO A SURPRESA 36 PAG","colec":"LEITURINHAS","qtde_total":1961,"saldo":4589,"saidas":1142,"producao":0,"saldo_prod":4589,"falta_sobra":2628,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":675,"Palmácia (CE)":45,"Macaparana (PE)":600,"Primavera do Leste (MT)":641}},{"cod":"11806","desc":"LV. PARADIDÁTICO FILHA DE COELHA GIRAFA É","colec":"LEITURINHAS","qtde_total":4961,"saldo":4546,"saidas":1222,"producao":0,"saldo_prod":4546,"falta_sobra":-415,"status":"Falta","sugestao":"500","def_prod":0,"demandas":{"Icó (CE)":675,"Palmácia (CE)":45,"Macaparana (PE)":600,"Primavera do Leste (MT)":641,"Ipu (CE)":3000}},{"cod":"11888","desc":"LV. PARADIDÁTICO SARAH E O PÉ DE MARACUJÁ 36 PAG","colec":"LEITURINHAS","qtde_total":1961,"saldo":4737,"saidas":1152,"producao":0,"saldo_prod":4737,"falta_sobra":2776,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":675,"Palmácia (CE)":45,"Macaparana (PE)":600,"Primavera do Leste (MT)":641}},{"cod":"5709","desc":"PARADIDATICO COFRE DO ONOFRE","colec":"PENSAR GRANDE","qtde_total":724,"saldo":2247,"saidas":19985,"producao":0,"saldo_prod":2247,"falta_sobra":1523,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Macaparana (PE)":274,"Primavera do Leste (MT)":450}},{"cod":"5710","desc":"CADERNO DE ATIVIDADES COFRE DO ONOFRE","colec":"PENSAR GRANDE","qtde_total":724,"saldo":2532,"saidas":19758,"producao":0,"saldo_prod":2532,"falta_sobra":1808,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Macaparana (PE)":274,"Primavera do Leste (MT)":450}},{"cod":"5910","desc":"SONHO DA TURMA LIVRO","colec":"PENSAR GRANDE","qtde_total":727,"saldo":2601,"saidas":21399,"producao":0,"saldo_prod":2601,"falta_sobra":1874,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Macaparana (PE)":287,"Primavera do Leste (MT)":440}},{"cod":"5860","desc":"SONHO DA TURMA CADERNO DE ATIVIDADES","colec":"PENSAR GRANDE","qtde_total":727,"saldo":2189,"saidas":21866,"producao":0,"saldo_prod":2189,"falta_sobra":1462,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Macaparana (PE)":287,"Primavera do Leste (MT)":440}},{"cod":"5708","desc":"CAIXA COFRE DO ONOFRE COL. PENSAR GRANDE","colec":"PENSAR GRANDE","qtde_total":1451,"saldo":5852,"saidas":39660,"producao":0,"saldo_prod":5852,"falta_sobra":4401,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Macaparana (PE)":561,"Primavera do Leste (MT)":890}},{"cod":"5681","desc":"EDUCAÇÃO FINANCEIRA - ALUNO","colec":"PENSAR GRANDE","qtde_total":1400,"saldo":7584,"saidas":52259,"producao":0,"saldo_prod":7584,"falta_sobra":6184,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Macaparana (PE)":1400}},{"cod":"5680","desc":"EDUCAÇÃO FINANCEIRA - PROFESSOR","colec":"PENSAR GRANDE","qtde_total":45,"saldo":1045,"saidas":970,"producao":0,"saldo_prod":1045,"falta_sobra":1000,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Macaparana (PE)":45}},{"cod":"6679","desc":"GUIA DO PROFESSOR COLEÇÃO PENSAR GRANDE","colec":"PENSAR GRANDE","qtde_total":45,"saldo":739,"saidas":2261,"producao":0,"saldo_prod":739,"falta_sobra":694,"status":"Sobra","sugestao":"800","def_prod":0,"demandas":{"Macaparana (PE)":45}},{"cod":"7951","desc":"EJA CONECTAR SABERES VOL.1 (ALUNO)","colec":"EJA","qtde_total":680,"saldo":1916,"saidas":5719,"producao":0,"saldo_prod":1916,"falta_sobra":1236,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Penedo (AL)":535,"Macaparana (PE)":145}},{"cod":"9351","desc":"EJA CONECTAR SABERES VOL.2 (ALUNO)","colec":"EJA","qtde_total":1114,"saldo":1895,"saidas":1390,"producao":0,"saldo_prod":1895,"falta_sobra":781,"status":"Sobra","sugestao":"900","def_prod":0,"demandas":{"Penedo (AL)":969,"Macaparana (PE)":145}},{"cod":"17246","desc":"Livro EJA Conectar Saberes Vol 03 - ALUNO (PRÁTICAS DE LEITURA E ESCRITA, PRÁTICAS DE LÍNGUA ESTRANGEIRA E INGLÊS E PRÁTICAS DE MATEMÁTICA)","colec":"EJA","qtde_total":397,"saldo":1430,"saidas":650,"producao":0,"saldo_prod":1430,"falta_sobra":1033,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Penedo (AL)":397}},{"cod":"17248","desc":"Livro EJA Conectar Saberes Vol 03 - ALUNO (PRÁTICAS DE NATUREZA E PRÁTICAS EM CIÊNCIAS HUMANAS E ARTE)","colec":"EJA","qtde_total":397,"saldo":1402,"saidas":650,"producao":0,"saldo_prod":1402,"falta_sobra":1005,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Penedo (AL)":397}},{"cod":"P24962-02","desc":"Livro EJA Conectar Saberes Vol 04 - ALUNO (PRÁTICAS DE LEITURA E ESCRITA, PRÁTICAS DE LÍNGUA ESTRANGEIRA E INGLÊS E PRÁTICAS DE MATEMÁTICA)","colec":"EJA","qtde_total":727,"saldo":0,"saidas":0,"producao":0,"saldo_prod":0,"falta_sobra":-727,"status":"Falta","sugestao":"800","def_prod":0,"demandas":{"Ibicuitinga (CE)":30,"Ipueiras (CE)":300,"Penedo (AL)":397}},{"cod":"P24962-04","desc":"Livro EJA Conectar Saberes Vol 04 - ALUNO (PRÁTICAS DE NATUREZA E PRÁTICAS EM CIÊNCIAS HUMANAS E ARTE)","colec":"EJA","qtde_total":727,"saldo":0,"saidas":0,"producao":0,"saldo_prod":0,"falta_sobra":-727,"status":"Falta","sugestao":"800","def_prod":0,"demandas":{"Ibicuitinga (CE)":30,"Ipueiras (CE)":300,"Penedo (AL)":397}},{"cod":"17428","desc":"Livro EJA Conectar Saberes Vol 05 - ALUNO (PRÁTICAS DE LEITURA E ESCRITA, PRÁTICAS DE LÍNGUA ESTRANGEIRA E INGLÊS E PRÁTICAS DE MATEMÁTICA)","colec":"EJA","qtde_total":200,"saldo":1780,"saidas":330,"producao":0,"saldo_prod":1780,"falta_sobra":1580,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Penedo (AL)":200}},{"cod":"17427","desc":"Livro EJA Conectar Saberes Vol 05 - ALUNO (PRÁTICAS DE NATUREZA E PRÁTICAS EM CIÊNCIAS HUMANAS E ARTE)","colec":"EJA","qtde_total":200,"saldo":1761,"saidas":330,"producao":0,"saldo_prod":1761,"falta_sobra":1561,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Penedo (AL)":200}},{"cod":"P24962-06","desc":"Livro EJA Conectar Saberes Vol 06 - ALUNO (PRÁTICAS DE LEITURA E ESCRITA, PRÁTICAS DE LÍNGUA ESTRANGEIRA E INGLÊS E PRÁTICAS DE MATEMÁTICA)","colec":"EJA","qtde_total":530,"saldo":0,"saidas":0,"producao":0,"saldo_prod":0,"falta_sobra":-530,"status":"Falta","sugestao":"600","def_prod":0,"demandas":{"Ibicuitinga (CE)":30,"Ipueiras (CE)":300,"Penedo (AL)":200}},{"cod":"P24962-08","desc":"Livro EJA Conectar Saberes Vol 06 - ALUNO (PRÁTICAS DE NATUREZA E PRÁTICAS EM CIÊNCIAS HUMANAS E ARTE)","colec":"EJA","qtde_total":530,"saldo":0,"saidas":0,"producao":0,"saldo_prod":0,"falta_sobra":-530,"status":"Falta","sugestao":"600","def_prod":0,"demandas":{"Ibicuitinga (CE)":30,"Ipueiras (CE)":300,"Penedo (AL)":200}},{"cod":"7952","desc":"EJA CONECTAR SABERES VOL.1 - PROFESSOR","colec":"EJA","qtde_total":17,"saldo":338,"saidas":-338,"producao":0,"saldo_prod":338,"falta_sobra":321,"status":"Sobra","sugestao":"400","def_prod":0,"demandas":{"Penedo (AL)":17}},{"cod":"9352","desc":"EJA CONECTAR SABERES VOL.2 - PROFESSOR","colec":"EJA","qtde_total":32,"saldo":485,"saidas":45,"producao":0,"saldo_prod":485,"falta_sobra":453,"status":"Sobra","sugestao":"500","def_prod":0,"demandas":{"Penedo (AL)":32}},{"cod":"17245","desc":"Livro EJA Conectar Saberes Vol 03 - PROFESSOR (PRÁTICAS DE LEITURA E ESCRITA, PRÁTICAS DE LÍNGUA ESTRANGEIRA E INGLÊS E PRÁTICAS DE MATEMÁTICA)","colec":"EJA","qtde_total":13,"saldo":460,"saidas":40,"producao":0,"saldo_prod":460,"falta_sobra":447,"status":"Sobra","sugestao":"500","def_prod":0,"demandas":{"Penedo (AL)":13}},{"cod":"17247","desc":"Livro EJA Conectar Saberes Vol 03 - PROFESSOR (PRÁTICAS DE NATUREZA E PRÁTICAS EM CIÊNCIAS HUMANAS E ARTE) -","colec":"EJA","qtde_total":13,"saldo":454,"saidas":46,"producao":0,"saldo_prod":454,"falta_sobra":441,"status":"Sobra","sugestao":"500","def_prod":0,"demandas":{"Penedo (AL)":13}},{"cod":"P24962-01","desc":"Livro EJA Conectar Saberes Vol 04 - PROFESSOR (PRÁTICAS DE LEITURA E ESCRITA, PRÁTICAS DE LÍNGUA ESTRANGEIRA E INGLÊS E PRÁTICAS DE MATEMÁTICA)","colec":"EJA","qtde_total":25,"saldo":0,"saidas":0,"producao":0,"saldo_prod":0,"falta_sobra":-25,"status":"Falta","sugestao":"100","def_prod":0,"demandas":{"Ibicuitinga (CE)":2,"Ipueiras (CE)":10,"Penedo (AL)":13}},{"cod":"P24962-03","desc":"Livro EJA Conectar Saberes Vol 04 - PROFESSOR (PRÁTICAS DE NATUREZA E PRÁTICAS EM CIÊNCIAS HUMANAS E ARTE)","colec":"EJA","qtde_total":25,"saldo":0,"saidas":0,"producao":0,"saldo_prod":0,"falta_sobra":-25,"status":"Falta","sugestao":"100","def_prod":0,"demandas":{"Ibicuitinga (CE)":2,"Ipueiras (CE)":10,"Penedo (AL)":13}},{"cod":"17429","desc":"Livro EJA Conectar Saberes Vol 05 (PRÁTICAS DE LEITURA E ESCRITA, PRÁTICAS DE LÍNGUA ESTRANGEIRA E INGLÊS E PRÁTICAS DE MATEMÁTICA) - PROFESSOR","colec":"EJA","qtde_total":6,"saldo":529,"saidas":12,"producao":0,"saldo_prod":529,"falta_sobra":523,"status":"Sobra","sugestao":"600","def_prod":0,"demandas":{"Penedo (AL)":6}},{"cod":"17426","desc":"Livro EJA Conectar Saberes Vol 05 - PROFESSOR (PRÁTICAS DE NATUREZA E PRÁTICAS EM CIÊNCIAS HUMANAS E ARTE)","colec":"EJA","qtde_total":6,"saldo":485,"saidas":15,"producao":0,"saldo_prod":485,"falta_sobra":479,"status":"Sobra","sugestao":"600","def_prod":0,"demandas":{"Penedo (AL)":6}},{"cod":"P24962-05","desc":"Livro EJA Conectar Saberes Vol 06 - PROFESSOR (PRÁTICAS DE LEITURA E ESCRITA, PRÁTICAS DE LÍNGUA ESTRANGEIRA E INGLÊS E PRÁTICAS DE MATEMÁTICA)","colec":"EJA","qtde_total":18,"saldo":0,"saidas":0,"producao":0,"saldo_prod":0,"falta_sobra":-18,"status":"Falta","sugestao":"100","def_prod":0,"demandas":{"Ibicuitinga (CE)":2,"Ipueiras (CE)":10,"Penedo (AL)":6}},{"cod":"P24962-07","desc":"Livro EJA Conectar Saberes Vol 06 - PROFESSOR (PRÁTICAS DE NATUREZA E PRÁTICAS EM CIÊNCIAS HUMANAS E ARTE)","colec":"EJA","qtde_total":18,"saldo":0,"saidas":0,"producao":0,"saldo_prod":0,"falta_sobra":-18,"status":"Falta","sugestao":"100","def_prod":0,"demandas":{"Ibicuitinga (CE)":2,"Ipueiras (CE)":10,"Penedo (AL)":6}},{"cod":"11088","desc":"CONECTAR SABERES NO EJA GUIA PROF.","colec":"EJA","qtde_total":32,"saldo":571,"saidas":45,"producao":0,"saldo_prod":571,"falta_sobra":539,"status":"Sobra","sugestao":"600","def_prod":0,"demandas":{"Penedo (AL)":32}},{"cod":"5672","desc":"REVISTA VOLORES NO TRÂNSITO VL 01","colec":"VALORES NO TRÂNSITO","qtde_total":0,"saldo":1053,"saidas":829,"producao":0,"saldo_prod":1053,"falta_sobra":1053,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"5673","desc":"REVISTA VOLORES NO TRÂNSITO VL 02","colec":"VALORES NO TRÂNSITO","qtde_total":0,"saldo":981,"saidas":851,"producao":0,"saldo_prod":981,"falta_sobra":981,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"176","desc":"COL TRÂNSITO (05 LIVROS) -","colec":"VALORES NO TRÂNSITO","qtde_total":0,"saldo":1244,"saidas":7709,"producao":0,"saldo_prod":1244,"falta_sobra":1244,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"1559","desc":"CAIXA COL. TRANSITO","colec":"VALORES NO TRÂNSITO","qtde_total":778,"saldo":719,"saidas":7725,"producao":0,"saldo_prod":719,"falta_sobra":-59,"status":"Falta","sugestao":"100","def_prod":0,"demandas":{"Icó (CE)":778}},{"cod":"11701","desc":"LV. PARADIDATICO COL TRANSITO - A INVENÇÃO DO TRÂNSITO","colec":"VALORES NO TRÂNSITO","qtde_total":778,"saldo":522,"saidas":672,"producao":0,"saldo_prod":522,"falta_sobra":-256,"status":"Falta","sugestao":"300","def_prod":0,"demandas":{"Icó (CE)":778}},{"cod":"11702","desc":"LV. PARADIDATICO COL TRANSITO - DEU NÓ NO EMBOÁ","colec":"VALORES NO TRÂNSITO","qtde_total":778,"saldo":518,"saidas":672,"producao":0,"saldo_prod":518,"falta_sobra":-260,"status":"Falta","sugestao":"300","def_prod":0,"demandas":{"Icó (CE)":778}},{"cod":"11703","desc":"LV. PARADIDATICO COL TRANSITO - LIVRO PERGUNTAS","colec":"VALORES NO TRÂNSITO","qtde_total":778,"saldo":520,"saidas":672,"producao":0,"saldo_prod":520,"falta_sobra":-258,"status":"Falta","sugestao":"300","def_prod":0,"demandas":{"Icó (CE)":778}},{"cod":"11704","desc":"LV. PARADIDATICO COL TRANSITO - MONSTRO NO CARRO","colec":"VALORES NO TRÂNSITO","qtde_total":778,"saldo":514,"saidas":672,"producao":0,"saldo_prod":514,"falta_sobra":-264,"status":"Falta","sugestao":"300","def_prod":0,"demandas":{"Icó (CE)":778}},{"cod":"11705","desc":"LV. PARADIDATICO COL TRANSITO - O JOGO INVISÍVEL","colec":"VALORES NO TRÂNSITO","qtde_total":778,"saldo":519,"saidas":672,"producao":0,"saldo_prod":519,"falta_sobra":-259,"status":"Falta","sugestao":"300","def_prod":0,"demandas":{"Icó (CE)":778}},{"cod":"5663","desc":"CONSTRUINDO VALORES NO TRÂNSITO VL 01-ALUNO","colec":"VALORES NO TRÂNSITO","qtde_total":2752,"saldo":1368,"saidas":2087,"producao":0,"saldo_prod":1368,"falta_sobra":-1384,"status":"Falta","sugestao":"1600","def_prod":0,"demandas":{"Icó (CE)":2752}},{"cod":"5664","desc":"CONSTRUINDO VALORES NO TRÂNSITO VL 02-ALUNO","colec":"VALORES NO TRÂNSITO","qtde_total":2811,"saldo":137,"saidas":5702,"producao":0,"saldo_prod":137,"falta_sobra":-2674,"status":"Falta","sugestao":"3000","def_prod":0,"demandas":{"Icó (CE)":2811}},{"cod":"5742","desc":"CONSTRUINDO VALORES NO TRÂNSITO VL 01-PROFESSOR","colec":"VALORES NO TRÂNSITO","qtde_total":0,"saldo":269,"saidas":313,"producao":0,"saldo_prod":269,"falta_sobra":269,"status":"Sobra","sugestao":"300","def_prod":0,"demandas":{}},{"cod":"5743","desc":"CONSTRUINDO VALORES NO TRÂNSITO VL 02-PROFESSOR","colec":"VALORES NO TRÂNSITO","qtde_total":0,"saldo":255,"saidas":305,"producao":0,"saldo_prod":255,"falta_sobra":255,"status":"Sobra","sugestao":"300","def_prod":0,"demandas":{}},{"cod":"13887","desc":"LV. PARADIDÁTICO HEITOR O ASTRONAUTA 16 PAG","colec":"TRAMPOLIM","qtde_total":711,"saldo":1928,"saidas":4052,"producao":0,"saldo_prod":1928,"falta_sobra":1217,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":711}},{"cod":"13888","desc":"LV. PARADIDATICO ZEBRA ZULEICA 20 PAG","colec":"TRAMPOLIM","qtde_total":711,"saldo":1978,"saidas":4002,"producao":0,"saldo_prod":1978,"falta_sobra":1267,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":711}},{"cod":"13889","desc":"LV. PARADIDÁTICO A ARANHA AMIGA 24 PAG","colec":"TRAMPOLIM","qtde_total":711,"saldo":1991,"saidas":4102,"producao":0,"saldo_prod":1991,"falta_sobra":1280,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":711}},{"cod":"13890","desc":"LV. PARADIDÁTICO O PROBLEMA DO SENHOR X 24 PAG","colec":"TRAMPOLIM","qtde_total":711,"saldo":2053,"saidas":4062,"producao":0,"saldo_prod":2053,"falta_sobra":1342,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":711}},{"cod":"14298","desc":"LV. PARADIDÁTICO A ALDEIA DE SAMI 16PAG.","colec":"AS CORES DA VIDA","qtde_total":12389,"saldo":279,"saidas":5221,"producao":4000,"saldo_prod":4279,"falta_sobra":-8110,"status":"Falta","sugestao":"9000","def_prod":0,"demandas":{"Icó (CE)":371,"Fortim (CE)":7,"Bayeux (PB)":2320,"Sinop (MT)":6050,"Primavera do Leste (MT)":641,"Ipu (CE)":3000}},{"cod":"14299","desc":"LV. PARADIDÁTICO O GUARDIÃO DA VIDA 12PAG","colec":"AS CORES DA VIDA","qtde_total":9389,"saldo":389,"saidas":5111,"producao":4000,"saldo_prod":4389,"falta_sobra":-5000,"status":"Falta","sugestao":"5500","def_prod":0,"demandas":{"Icó (CE)":371,"Fortim (CE)":7,"Bayeux (PB)":2320,"Sinop (MT)":6050,"Primavera do Leste (MT)":641}},{"cod":"14300","desc":"LV. PARADIDÁTICO MEU CABELO DE MOLINHA 12PAG","colec":"AS CORES DA VIDA","qtde_total":12389,"saldo":4784,"saidas":5166,"producao":0,"saldo_prod":4784,"falta_sobra":-7605,"status":"Falta","sugestao":"8400","def_prod":0,"demandas":{"Icó (CE)":371,"Fortim (CE)":7,"Bayeux (PB)":2320,"Sinop (MT)":6050,"Primavera do Leste (MT)":641,"Ipu (CE)":3000}},{"cod":"14301","desc":"LV. PARADIDÁTICO O ESPELHO É MEU AMIGO","colec":"AS CORES DA VIDA","qtde_total":9389,"saldo":4740,"saidas":5180,"producao":0,"saldo_prod":4740,"falta_sobra":-4649,"status":"Falta","sugestao":"5200","def_prod":0,"demandas":{"Icó (CE)":371,"Fortim (CE)":7,"Bayeux (PB)":2320,"Sinop (MT)":6050,"Primavera do Leste (MT)":641}},{"cod":"13092","desc":"LIVRO PARADIDÁDITO O BÊ-A-BÁ DO CEARÁ 32PAG.","colec":"AVULSO","qtde_total":0,"saldo":2046,"saidas":80,"producao":0,"saldo_prod":2046,"falta_sobra":2046,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"254460","desc":"LIVRO DIVERSA MENTE ALUNO (FORMA CERTA)","colec":"DIVERSAMENTE","qtde_total":1640,"saldo":2069,"saidas":931,"producao":0,"saldo_prod":2069,"falta_sobra":429,"status":"Sobra","sugestao":"600","def_prod":0,"demandas":{"Juína (MT)":300,"Jauru (MT)":200,"Rio Branco (MT)":100,"Figueirópolis d' Oeste (MT)":300,"Guarantã do Norte (MT)":200,"Primavera do Leste (MT)":440,"Araputanga (MT)":100}},{"cod":"254461","desc":"LIVRO DIVERSA MENTE PROFESSOR (FORMA CERTA)","colec":"DIVERSAMENTE","qtde_total":238,"saldo":565,"saidas":435,"producao":0,"saldo_prod":565,"falta_sobra":327,"status":"Sobra","sugestao":"400","def_prod":0,"demandas":{"Juína (MT)":15,"Jauru (MT)":10,"Rio Branco (MT)":10,"Figueirópolis d' Oeste (MT)":30,"Guarantã do Norte (MT)":118,"Primavera do Leste (MT)":50,"Araputanga (MT)":5}},{"cod":"111112","desc":"LV DIVERSAMENTE ALUNO (SEGE)","colec":"DIVERSAMENTE","qtde_total":0,"saldo":0,"saidas":0,"producao":4000,"saldo_prod":4000,"falta_sobra":4000,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"111113","desc":"LV DIVERSAMENTE PROF. (SEGE)","colec":"DIVERSAMENTE","qtde_total":0,"saldo":0,"saidas":0,"producao":500,"saldo_prod":500,"falta_sobra":500,"status":"Sobra","sugestao":"600","def_prod":0,"demandas":{}},{"cod":"111111","desc":"PROPOSTA PEDAGOGICA DIVERSAMENTE (SEGE)","colec":"DIVERSAMENTE","qtde_total":0,"saldo":0,"saidas":0,"producao":700,"saldo_prod":700,"falta_sobra":700,"status":"Sobra","sugestao":"800","def_prod":0,"demandas":{}},{"cod":"11576","desc":"LIVRO DIVERSAMENTE (ALUNO)","colec":"DIVERSAMENTE","qtde_total":0,"saldo":0,"saidas":7662,"producao":0,"saldo_prod":0,"falta_sobra":0,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"11577","desc":"LIVRO DIVERSAMENTE (PROFESSOR)","colec":"DIVERSAMENTE","qtde_total":0,"saldo":0,"saidas":868,"producao":0,"saldo_prod":0,"falta_sobra":0,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"11576-1","desc":"LIVRO DIVERSAMENTE (ALUNO) (NOVO ESPIRAL DIFERENTE)","colec":"DIVERSAMENTE","qtde_total":10173,"saldo":36,"saidas":1620,"producao":3520,"saldo_prod":3556,"falta_sobra":-6617,"status":"Falta","sugestao":"6200","def_prod":0,"demandas":{"Arapiraca (AL)":3000,"Fortim (CE)":335,"Granja (CE)":1500,"Espírito Santo (RN)":100,"São Gonçalo (RN)":1300,"São Pedro  (RN)":168,"Serrinha dos Pintos (RN)":120,"Parelhas (RN)":250,"Pontes e Lacerda (MT)":2400,"Ipu (CE)":1000}},{"cod":"11577-2","desc":"LIVRO DIVERSAMENTE (PROFESSOR) (NOVO ESPIRAL DIFERENTE)","colec":"DIVERSAMENTE","qtde_total":568,"saldo":1451,"saidas":407,"producao":0,"saldo_prod":1451,"falta_sobra":883,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Arapiraca (AL)":70,"Fortim (CE)":25,"Granja (CE)":100,"Espírito Santo (RN)":10,"São Gonçalo (RN)":130,"São Pedro  (RN)":16,"Serrinha dos Pintos (RN)":12,"Parelhas (RN)":25,"Pontes e Lacerda (MT)":80,"Ipu (CE)":100}},{"cod":"12247","desc":"PROPOSTA PEDAGOGICA DIVERSAMENTE PROFESSOR","colec":"DIVERSAMENTE","qtde_total":1206,"saldo":2660,"saidas":667,"producao":0,"saldo_prod":2660,"falta_sobra":1454,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Arapiraca (AL)":70,"Fortim (CE)":25,"Granja (CE)":100,"Espírito Santo (RN)":10,"São Gonçalo (RN)":130,"São Pedro  (RN)":16,"Serrinha dos Pintos (RN)":12,"Parelhas (RN)":25,"Indaiatuba (SP)":400,"Pontes e Lacerda (MT)":80,"Juína (MT)":15,"Jauru (MT)":10,"Rio Branco (MT)":10,"Figueirópolis d' Oeste (MT)":30,"Guarantã do Norte (MT)":118,"Primavera do Leste (MT)":50,"Araputanga (MT)":5,"Ipu (CE)":100}},{"cod":"10000","desc":"BOLSAS DIVERSAMENTE","colec":"DIVERSAMENTE","qtde_total":1206,"saldo":765,"saidas":607,"producao":49,"saldo_prod":814,"falta_sobra":-392,"status":"Falta","sugestao":"400","def_prod":0,"demandas":{"Arapiraca (AL)":70,"Fortim (CE)":25,"Granja (CE)":100,"Espírito Santo (RN)":10,"São Gonçalo (RN)":130,"São Pedro  (RN)":16,"Serrinha dos Pintos (RN)":12,"Parelhas (RN)":25,"Indaiatuba (SP)":400,"Pontes e Lacerda (MT)":80,"Juína (MT)":15,"Jauru (MT)":10,"Rio Branco (MT)":10,"Figueirópolis d' Oeste (MT)":30,"Guarantã do Norte (MT)":118,"Primavera do Leste (MT)":50,"Araputanga (MT)":5,"Ipu (CE)":100}},{"cod":"2227","desc":"DESC E APREND HISTORIAS E LETRAS VL 01","colec":"HISTORIAS","qtde_total":0,"saldo":1124,"saidas":12393,"producao":0,"saldo_prod":1124,"falta_sobra":1124,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"1424","desc":"DESC E APREND HISTORIAS E NUMEROS VL 02","colec":"HISTORIAS","qtde_total":0,"saldo":1335,"saidas":12468,"producao":0,"saldo_prod":1335,"falta_sobra":1335,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"9894","desc":"DESC E APREND HISTORIAS E LETRAS VL 01 (PROF.)","colec":"HISTORIAS","qtde_total":0,"saldo":0,"saidas":0,"producao":0,"saldo_prod":0,"falta_sobra":0,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"9895","desc":"DESC E APREND HISTORIAS E NUMEROS VL 02 (PROF.)","colec":"HISTORIAS","qtde_total":0,"saldo":0,"saidas":0,"producao":0,"saldo_prod":0,"falta_sobra":0,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"9847","desc":"LIVRO INGLÊS (WATCH AND LEARN) - ALUNO VOL.1","colec":"INGLÊS","qtde_total":150,"saldo":1938,"saidas":862,"producao":0,"saldo_prod":1938,"falta_sobra":1788,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Palmácia (CE)":150}},{"cod":"9848","desc":"LIVRO INGLÊS (WATCH AND LEARN) - PROFº VOL.1","colec":"INGLÊS","qtde_total":5,"saldo":572,"saidas":35,"producao":0,"saldo_prod":572,"falta_sobra":567,"status":"Sobra","sugestao":"700","def_prod":0,"demandas":{"Palmácia (CE)":5}},{"cod":"5694","desc":"LIVRO INGLÊS (WATCH AND LEARN) - ALUNO VOL.2","colec":"INGLÊS","qtde_total":490,"saldo":2150,"saidas":2990,"producao":0,"saldo_prod":2150,"falta_sobra":1660,"status":"Sobra","sugestao":"","def_prod":1000,"demandas":{"Palmácia (CE)":490}},{"cod":"6337","desc":"LIVRO INGLÊS (WATCH AND LEARN) - PROFº VOL.2","colec":"INGLÊS","qtde_total":16,"saldo":232,"saidas":270,"producao":0,"saldo_prod":232,"falta_sobra":216,"status":"Sobra","sugestao":"300","def_prod":0,"demandas":{"Palmácia (CE)":16}},{"cod":"9849","desc":"LV. REFORÇO BRINCAR, CRESCER, APRENDER - PORTUGUÊS (ALUNO)","colec":"BRINCAR,CRESCER E APR.","qtde_total":1860,"saldo":2636,"saidas":1000,"producao":0,"saldo_prod":2636,"falta_sobra":776,"status":"Sobra","sugestao":"900","def_prod":0,"demandas":{"Granja (CE)":1500,"Macaparana (PE)":360}},{"cod":"9850","desc":"LV. REFORÇO BRINCAR, CRESCER, APRENDER - PORTUGUÊS (PROFESSOR)","colec":"BRINCAR,CRESCER E APR.","qtde_total":62,"saldo":112,"saidas":79,"producao":0,"saldo_prod":112,"falta_sobra":50,"status":"Sobra","sugestao":"100","def_prod":0,"demandas":{"Granja (CE)":50,"Macaparana (PE)":12}},{"cod":"16665","desc":"LV. REFORÇO BRINCAR, CRESCER, APRENDER - MATEMÁTICA (ALUNO)","colec":"BRINCAR,CRESCER E APR.","qtde_total":1500,"saldo":4618,"saidas":1630,"producao":0,"saldo_prod":4618,"falta_sobra":3118,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Granja (CE)":1500}},{"cod":"16396","desc":"LV. REFORÇO BRINCAR, CRESCER, APRENDER - MATEMÁTICA (PROFESSOR)","colec":"BRINCAR,CRESCER E APR.","qtde_total":50,"saldo":408,"saidas":539,"producao":0,"saldo_prod":408,"falta_sobra":358,"status":"Sobra","sugestao":"400","def_prod":0,"demandas":{"Granja (CE)":50}},{"cod":"10042","desc":"CARTAZ BRINCAR, CRESCER E APRENDER","colec":"BRINCAR,CRESCER E APR.","qtde_total":50,"saldo":234,"saidas":59,"producao":0,"saldo_prod":234,"falta_sobra":184,"status":"Sobra","sugestao":"300","def_prod":0,"demandas":{"Granja (CE)":50}},{"cod":"9627","desc":"LV. DESPERTAR SABERES 2º ANO PORTUGUÊS (ALUNO)","colec":"DESPERTAR SABERES","qtde_total":850,"saldo":3228,"saidas":2614,"producao":0,"saldo_prod":3228,"falta_sobra":2378,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Santana do Ipanema (AL)":550,"Macaparana (PE)":300}},{"cod":"9787","desc":"DESPERTAR SABERES 2º ANO SIMULADO PORTUGUÊS (ALUNO)","colec":"DESPERTAR SABERES","qtde_total":850,"saldo":3479,"saidas":2617,"producao":0,"saldo_prod":3479,"falta_sobra":2629,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Santana do Ipanema (AL)":550,"Macaparana (PE)":300}},{"cod":"11578","desc":"LV. DESPERTAR SABERES 2º ANO MATEMATICA (ALUNO)","colec":"DESPERTAR SABERES","qtde_total":850,"saldo":3146,"saidas":2619,"producao":0,"saldo_prod":3146,"falta_sobra":2296,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Santana do Ipanema (AL)":550,"Macaparana (PE)":300}},{"cod":"11580","desc":"DESPERTAR SABERES 2º ANO SIMULADO MATEMATICA (ALUNO)","colec":"DESPERTAR SABERES","qtde_total":850,"saldo":3092,"saidas":2620,"producao":0,"saldo_prod":3092,"falta_sobra":2242,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Santana do Ipanema (AL)":550,"Macaparana (PE)":300}},{"cod":"9628","desc":"LV. DESPERTAR SABERES 2º ANO PORTUGUÊS (PROFESSOR)","colec":"DESPERTAR SABERES","qtde_total":250,"saldo":565,"saidas":805,"producao":0,"saldo_prod":565,"falta_sobra":315,"status":"Sobra","sugestao":"400","def_prod":0,"demandas":{"Santana do Ipanema (AL)":180,"Macaparana (PE)":70}},{"cod":"9788","desc":"DESPERTAR SABERES 2º ANO SIMULADO PORTUGUÊS (PROFESSOR)","colec":"DESPERTAR SABERES","qtde_total":250,"saldo":131,"saidas":256,"producao":0,"saldo_prod":131,"falta_sobra":-119,"status":"Falta","sugestao":"200","def_prod":600,"demandas":{"Santana do Ipanema (AL)":180,"Macaparana (PE)":70}},{"cod":"11579","desc":"LV. DESPERTAR SABERES 2º ANO MATEMATICA (PROFESSOR)","colec":"DESPERTAR SABERES","qtde_total":250,"saldo":610,"saidas":833,"producao":0,"saldo_prod":610,"falta_sobra":360,"status":"Sobra","sugestao":"400","def_prod":0,"demandas":{"Santana do Ipanema (AL)":180,"Macaparana (PE)":70}},{"cod":"11581","desc":"DESPERTAR SABERES 2º ANO SIMULADO MATEMATICA (PROFESSOR)","colec":"DESPERTAR SABERES","qtde_total":250,"saldo":60,"saidas":256,"producao":0,"saldo_prod":60,"falta_sobra":-190,"status":"Falta","sugestao":"300","def_prod":600,"demandas":{"Santana do Ipanema (AL)":180,"Macaparana (PE)":70}},{"cod":"11836","desc":"LV. DESPERTAR SABERES 5º ANO PORTUGUÊS (ALUNO)","colec":"DESPERTAR SABERES","qtde_total":773,"saldo":2382,"saidas":2804,"producao":0,"saldo_prod":2382,"falta_sobra":1609,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Santana do Ipanema (AL)":450,"Macaparana (PE)":323}},{"cod":"11838","desc":"DESPERTAR SABERES 5º ANO SIMULADO PORTUGUÊS (ALUNO)","colec":"DESPERTAR SABERES","qtde_total":773,"saldo":2184,"saidas":2804,"producao":0,"saldo_prod":2184,"falta_sobra":1411,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Santana do Ipanema (AL)":450,"Macaparana (PE)":323}},{"cod":"11840","desc":"LV. DESPERTAR SABERES 5º ANO MATEMATICA (ALUNO)","colec":"DESPERTAR SABERES","qtde_total":773,"saldo":2464,"saidas":2804,"producao":0,"saldo_prod":2464,"falta_sobra":1691,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Santana do Ipanema (AL)":450,"Macaparana (PE)":323}},{"cod":"11843","desc":"DESPERTAR SABERES 5º ANO SIMULADO MATEMATICA (ALUNO)","colec":"DESPERTAR SABERES","qtde_total":773,"saldo":2817,"saidas":2214,"producao":0,"saldo_prod":2817,"falta_sobra":2044,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Santana do Ipanema (AL)":450,"Macaparana (PE)":323}},{"cod":"11837","desc":"LV. DESPERTAR SABERES 5º ANO PORTUGUÊS (PROFESSOR)","colec":"DESPERTAR SABERES","qtde_total":260,"saldo":544,"saidas":271,"producao":0,"saldo_prod":544,"falta_sobra":284,"status":"Sobra","sugestao":"400","def_prod":0,"demandas":{"Santana do Ipanema (AL)":180,"Macaparana (PE)":80}},{"cod":"11839","desc":"DESPERTAR SABERES 5º ANO SIMULADO PORTUGUÊS (PROFESSOR)","colec":"DESPERTAR SABERES","qtde_total":260,"saldo":13,"saidas":271,"producao":0,"saldo_prod":13,"falta_sobra":-247,"status":"Falta","sugestao":"300","def_prod":500,"demandas":{"Santana do Ipanema (AL)":180,"Macaparana (PE)":80}},{"cod":"11842","desc":"LV. DESPERTAR SABERES 5º ANO MATEMATICA (PROFESSOR)","colec":"DESPERTAR SABERES","qtde_total":260,"saldo":564,"saidas":271,"producao":0,"saldo_prod":564,"falta_sobra":304,"status":"Sobra","sugestao":"400","def_prod":0,"demandas":{"Santana do Ipanema (AL)":180,"Macaparana (PE)":80}},{"cod":"11844","desc":"DESPERTAR SABERES 5º ANO SIMULADO MATEMATICA (PROFESSOR)","colec":"DESPERTAR SABERES","qtde_total":260,"saldo":6,"saidas":271,"producao":0,"saldo_prod":6,"falta_sobra":-254,"status":"Falta","sugestao":"300","def_prod":500,"demandas":{"Santana do Ipanema (AL)":180,"Macaparana (PE)":80}},{"cod":"12744","desc":"LV. DESPERTAR SABERES 9º ANO PORTUGUÊS (ALUNO)","colec":"DESPERTAR SABERES","qtde_total":1000,"saldo":2168,"saidas":1917,"producao":0,"saldo_prod":2168,"falta_sobra":1168,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Santana do Ipanema (AL)":700,"Macaparana (PE)":300}},{"cod":"12746","desc":"DESPERTAR SABERES 9º ANO SIMULADO PORTUGUÊS (ALUNO)","colec":"DESPERTAR SABERES","qtde_total":1000,"saldo":3216,"saidas":5503,"producao":0,"saldo_prod":3216,"falta_sobra":2216,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Santana do Ipanema (AL)":700,"Macaparana (PE)":300}},{"cod":"12962","desc":"LV. DESPERTAR SABERES 9º ANO MATEMATICA (ALUNO)","colec":"DESPERTAR SABERES","qtde_total":1000,"saldo":3087,"saidas":1917,"producao":0,"saldo_prod":3087,"falta_sobra":2087,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Santana do Ipanema (AL)":700,"Macaparana (PE)":300}},{"cod":"12963","desc":"DESPERTAR SABERES 9º ANO SIMULADO MATEMATICA (ALUNO)","colec":"DESPERTAR SABERES","qtde_total":1000,"saldo":3227,"saidas":5450,"producao":0,"saldo_prod":3227,"falta_sobra":2227,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Santana do Ipanema (AL)":700,"Macaparana (PE)":300}},{"cod":"12745","desc":"LV. DESPERTAR SABERES 9º ANO PORTUGUÊS (PROFESSOR)","colec":"DESPERTAR SABERES","qtde_total":70,"saldo":781,"saidas":157,"producao":0,"saldo_prod":781,"falta_sobra":711,"status":"Sobra","sugestao":"800","def_prod":0,"demandas":{"Santana do Ipanema (AL)":40,"Macaparana (PE)":30}},{"cod":"12747","desc":"DESPERTAR SABERES 9º ANO SIMULADO PORTUGUÊS (PROFESSOR)","colec":"DESPERTAR SABERES","qtde_total":70,"saldo":190,"saidas":157,"producao":0,"saldo_prod":190,"falta_sobra":120,"status":"Sobra","sugestao":"200","def_prod":500,"demandas":{"Santana do Ipanema (AL)":40,"Macaparana (PE)":30}},{"cod":"12964","desc":"LV. DESPERTAR SABERES 9º ANO MATEMATICA (PROFESSOR)","colec":"DESPERTAR SABERES","qtde_total":70,"saldo":787,"saidas":157,"producao":0,"saldo_prod":787,"falta_sobra":717,"status":"Sobra","sugestao":"800","def_prod":0,"demandas":{"Santana do Ipanema (AL)":40,"Macaparana (PE)":30}},{"cod":"12965","desc":"DESPERTAR SABERES 9º ANO SIMULADO MATEMATICA (PROFESSOR)","colec":"DESPERTAR SABERES","qtde_total":70,"saldo":338,"saidas":157,"producao":0,"saldo_prod":338,"falta_sobra":268,"status":"Sobra","sugestao":"300","def_prod":500,"demandas":{"Santana do Ipanema (AL)":40,"Macaparana (PE)":30}},{"cod":"13951","desc":"LIVRO MUNDO DA LINGUAGEM (ALUNO)","colec":"MUNDO DA LINGUAGEM","qtde_total":3640,"saldo":4705,"saidas":929,"producao":0,"saldo_prod":4705,"falta_sobra":1065,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Granja (CE)":2400,"Bayeux (PB)":1240}},{"cod":"13952","desc":"LV. MUNDO DA LINGUAGEM CADERNO DE ATIVIDADE (ALUNO)","colec":"MUNDO DA LINGUAGEM","qtde_total":3640,"saldo":4826,"saidas":925,"producao":0,"saldo_prod":4826,"falta_sobra":1186,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Granja (CE)":2400,"Bayeux (PB)":1240}},{"cod":"13954","desc":"LIVRO MUNOD DA LINGUAGEM BLOCO DE PRODUÇÃO","colec":"MUNDO DA LINGUAGEM","qtde_total":3640,"saldo":4524,"saidas":945,"producao":0,"saldo_prod":4524,"falta_sobra":884,"status":"Sobra","sugestao":"1000","def_prod":0,"demandas":{"Granja (CE)":2400,"Bayeux (PB)":1240}},{"cod":"13950","desc":"LIVRO MUNDO DA LINGUAGEM (PROFESSOR)","colec":"MUNDO DA LINGUAGEM","qtde_total":400,"saldo":692,"saidas":110,"producao":0,"saldo_prod":692,"falta_sobra":292,"status":"Sobra","sugestao":"400","def_prod":0,"demandas":{"Granja (CE)":250,"Bayeux (PB)":150}},{"cod":"13953","desc":"LV. MUNDO DA LINGUAGEM CADERNO DE ATIVIDADE (PROFESSOR)","colec":"MUNDO DA LINGUAGEM","qtde_total":400,"saldo":691,"saidas":111,"producao":0,"saldo_prod":691,"falta_sobra":291,"status":"Sobra","sugestao":"400","def_prod":0,"demandas":{"Granja (CE)":250,"Bayeux (PB)":150}},{"cod":"P24949-01","desc":"LIVRO DIDÁTICO EDUCAÇÃO AMBIENTAL E \nCLIMÁTICA-ALUNO (VOL.1) (SEGE)","colec":"AMBIENTAL E CLIMÁTICA","qtde_total":400,"saldo":1175,"saidas":939,"producao":0,"saldo_prod":1175,"falta_sobra":775,"status":"Sobra","sugestao":"900","def_prod":0,"demandas":{"São Pedro  (RN)":400}},{"cod":"P24949-02","desc":"LIVRO DIDÁTICO EDUCAÇÃO AMBIENTAL E \nCLIMÁTICA-ALUNO (VOL.2)(SEGE)","colec":"AMBIENTAL E CLIMÁTICA","qtde_total":400,"saldo":1174,"saidas":879,"producao":0,"saldo_prod":1174,"falta_sobra":774,"status":"Sobra","sugestao":"900","def_prod":0,"demandas":{"São Pedro  (RN)":400}},{"cod":"P24949-03","desc":"LIVRO DIDÁTICO EDUCAÇÃO AMBIENTAL E \nCLIMÁTICA-PROF. (VOL.1)(SEGE)","colec":"AMBIENTAL E CLIMÁTICA","qtde_total":0,"saldo":418,"saidas":60,"producao":42,"saldo_prod":460,"falta_sobra":460,"status":"Sobra","sugestao":"600","def_prod":0,"demandas":{}},{"cod":"P24949-04","desc":"LIVRO DIDÁTICO EDUCAÇÃO AMBIENTAL E \nCLIMÁTICA-PROF. (VOL.2)(SEGE)","colec":"AMBIENTAL E CLIMÁTICA","qtde_total":0,"saldo":478,"saidas":50,"producao":0,"saldo_prod":478,"falta_sobra":478,"status":"Sobra","sugestao":"600","def_prod":0,"demandas":{}},{"cod":"P25180-05","desc":"CARTAZES - EDUCAÇÃO AMBIENTAL (SEGE)","colec":"AMBIENTAL E CLIMÁTICA","qtde_total":0,"saldo":971,"saidas":29,"producao":0,"saldo_prod":971,"falta_sobra":971,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{}},{"cod":"15649","desc":"PARAD COL CRESCER COM CLÁSSICOS A ESCRAVA","colec":"CRESCER COM CLASSICOS","qtde_total":3548,"saldo":870,"saidas":720,"producao":0,"saldo_prod":870,"falta_sobra":-2678,"status":"Falta","sugestao":"3000","def_prod":0,"demandas":{"Icó (CE)":758,"Palmácia (CE)":30,"Granja (CE)":760,"Ipu (CE)":2000}},{"cod":"15651","desc":"PARAD COL CRESCER COM CLÁSSICOS A NOVA CALIFÓRNIA","colec":"CRESCER COM CLASSICOS","qtde_total":3790,"saldo":890,"saidas":720,"producao":0,"saldo_prod":890,"falta_sobra":-2900,"status":"Falta","sugestao":"3200","def_prod":0,"demandas":{"Palmácia (CE)":30,"Granja (CE)":760,"Ipu (CE)":3000}},{"cod":"14673","desc":"LV. PARADIDÁTICO IRACEMA 120 PAG.","colec":"CRESCER COM CLASSICOS","qtde_total":4478,"saldo":885,"saidas":1155,"producao":0,"saldo_prod":885,"falta_sobra":-3593,"status":"Falta","sugestao":"4000","def_prod":0,"demandas":{"Icó (CE)":698,"Palmácia (CE)":30,"Granja (CE)":750,"Ipu (CE)":3000}},{"cod":"15650","desc":"PARAD COL CRESCER COM CLÁSSICOS MANIFESTOS","colec":"CRESCER COM CLASSICOS","qtde_total":780,"saldo":774,"saidas":726,"producao":0,"saldo_prod":774,"falta_sobra":-6,"status":"Falta","sugestao":"100","def_prod":0,"demandas":{"Palmácia (CE)":30,"Granja (CE)":750}},{"cod":"14498","desc":"LV. PARADIDÁTICO MINSK 36 PAG","colec":"CRESCER COM CLASSICOS","qtde_total":3790,"saldo":1292,"saidas":4708,"producao":0,"saldo_prod":1292,"falta_sobra":-2498,"status":"Falta","sugestao":"2800","def_prod":0,"demandas":{"Palmácia (CE)":30,"Granja (CE)":760,"Ipu (CE)":3000}},{"cod":"14496","desc":"LV. PARADIDATICO O RETRATO DA AVÓ 20 PAG","colec":"CRESCER COM CLASSICOS","qtde_total":740,"saldo":1260,"saidas":4740,"producao":0,"saldo_prod":1260,"falta_sobra":520,"status":"Sobra","sugestao":"600","def_prod":0,"demandas":{"Palmácia (CE)":30,"Granja (CE)":710}},{"cod":"14670","desc":"LV. PARADIDÁTICO OS VERSOS QUE TE FIZ 44 PAG","colec":"CRESCER COM CLASSICOS","qtde_total":790,"saldo":1285,"saidas":740,"producao":0,"saldo_prod":1285,"falta_sobra":495,"status":"Sobra","sugestao":"600","def_prod":0,"demandas":{"Palmácia (CE)":30,"Granja (CE)":760}},{"cod":"14671","desc":"LV. PARADIDÁTICO QUADRAS DE AMOR 40 PAG","colec":"CRESCER COM CLASSICOS","qtde_total":2740,"saldo":1638,"saidas":1332,"producao":0,"saldo_prod":1638,"falta_sobra":-1102,"status":"Falta","sugestao":"1300","def_prod":0,"demandas":{"Palmácia (CE)":30,"Granja (CE)":710,"Ipu (CE)":2000}},{"cod":"14672","desc":"LV. PARADIDÁTICO VIDAS SECAS 104 PAG","colec":"CRESCER COM CLASSICOS","qtde_total":1449,"saldo":1535,"saidas":1595,"producao":2830,"saldo_prod":4365,"falta_sobra":2916,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Icó (CE)":669,"Palmácia (CE)":30,"Granja (CE)":750}},{"cod":"14495","desc":"LV. PARADIDÁTICO O MARQUÊS DE RABICÓ","colec":"CRESCER COM CLASSICOS","qtde_total":4426,"saldo":1280,"saidas":4720,"producao":0,"saldo_prod":1280,"falta_sobra":-3146,"status":"Falta","sugestao":"3500","def_prod":0,"demandas":{"Icó (CE)":686,"Palmácia (CE)":30,"Granja (CE)":710,"Ipu (CE)":3000}},{"cod":"18048","desc":"LIÇÕES","colec":"CRESCER COM CLASSICOS","qtde_total":760,"saldo":2053,"saidas":622,"producao":0,"saldo_prod":2053,"falta_sobra":1293,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Granja (CE)":760}},{"cod":"18047","desc":"CONTO DE ESCOLA","colec":"CRESCER COM CLASSICOS","qtde_total":760,"saldo":2039,"saidas":20,"producao":0,"saldo_prod":2039,"falta_sobra":1279,"status":"Sobra","sugestao":"","def_prod":0,"demandas":{"Granja (CE)":760}}],"municipios":["Arapiraca (AL)","Araputanga (MT)","Araucaju (SE)","Bayeux (PB)","Campo Morão","Espírito Santo (RN)","Figueirópolis d' Oeste (MT)","Fortim (CE)","Granja (CE)","Guarantã do Norte (MT)","Ibicuitinga (CE)","Icó (CE)","Indaiatuba (SP)","Ipu (CE)","Ipueiras (CE)","Jauru (MT)","Juína (MT)","Macaparana (PE)","Pacoti (CE)","Palmácia (CE)","Parelhas (RN)","Parnamirim (RN)","Penedo (AL)","Pontes e Lacerda (MT)","Primavera do Leste (MT)","Rio Branco (MT)","Santana do Ipanema (AL)","Serrinha dos Pintos (RN)","Sinop (MT)","São Gonçalo (RN)","São Gonçalo do Amarante (CE)","São Paulo do Potengi  (RN)","São Pedro  (RN)","Tucano (BA)","Vargem Alta (ES)"],"colecoes":["AMBIENTAL E CLIMÁTICA","AS CORES DA VIDA","AVULSO","BRINCAR,CRESCER E APR.","CONST.VALORES","CRESCER COM CLASSICOS","DESPERTANDO P/ LEITURA","DESPERTAR SABERES","DIVERSAMENTE","EJA","HISTORIAS","INGLÊS","INT. E BRINCADEIRAS","LEITURINHAS","MUNDO DA LINGUAGEM","PENSAR GRANDE","SEMEANDO VALORES","TRAMPOLIM","VALORES NO TRÂNSITO"],"tipos_municipio":{"Ibicuitinga (CE)":"Licita.","Ipueiras (CE)":"Licita.","Icó (CE)":"Prospe.","Santana do Ipanema (AL)":"Prospe.","Campo Morão":"","Palmácia (CE)":"Prospe.","Arapiraca (AL)":"Licita.","Fortim (CE)":"Licita.","Penedo (AL)":"Prospe.","Granja (CE)":"Licita.","Pacoti (CE)":"Prospe.","São Gonçalo do Amarante (CE)":"Prospe.","Vargem Alta (ES)":"Prospe.","Bayeux (PB)":"Prospe.","Macaparana (PE)":"Prospe.","Espírito Santo (RN)":"Prospe.","São Gonçalo (RN)":"Prospe.","São Pedro  (RN)":"Prospe.","São Paulo do Potengi  (RN)":"Prospe.","Serrinha dos Pintos (RN)":"Prospe.","Tucano (BA)":"Prospe.","Parelhas (RN)":"Prospe.","Indaiatuba (SP)":"Licita.","Pontes e Lacerda (MT)":"Prospe.","Juína (MT)":"Prospe.","Jauru (MT)":"Prospe.","Sinop (MT)":"Prospe.","Rio Branco (MT)":"Prospe.","Figueirópolis d' Oeste (MT)":"Prospe.","Guarantã do Norte (MT)":"Prospe.","Primavera do Leste (MT)":"Prospe.","Araputanga (MT)":"Prospe.","Ipu (CE)":"Prospe.","Parnamirim (RN)":"Prospe.","Araucaju (SE)":"Prospe."},"gerado_em":"24/04/2026 13:32"};
+
+const fmt = n => n == null ? '–' : Math.abs(n).toLocaleString('pt-BR');
+const fmtNeg = n => {
+  if (n == null) return '–';
+  const s = Math.abs(n).toLocaleString('pt-BR');
+  return n < 0 ? `(${s})` : s;
+};
+
+// === STATE ===
+const state = {
+  municipios: new Set(['__TODOS__']),
+  colecoes: new Set(['__TODAS__']),
+  sortKey: 'falta_sobra',
+  sortDir: 'desc',
+  searchText: '',
+  expandedRows: new Set(),
+  collapsedSections: new Set(),
+};
+
+document.getElementById('meta-count').textContent = DADOS.produtos.length;
+
+// === HELPERS ===
+function chip(label, active, isTodos, tipo, badge, shareDot) {
+  const el = document.createElement('span');
+  el.className = 'chip' + (active ? ' active' : '');
+  let html = label;
+  if (tipo) html += ` <span class="tipo">${tipo}</span>`;
+  el.innerHTML = html;
+  if (badge !== null && badge !== undefined && badge > 0) {
+    const b = document.createElement('span');
+    b.className = 'badge';
+    b.textContent = badge;
+    el.appendChild(b);
+  }
+  if (shareDot) {
+    const d = document.createElement('span');
+    d.className = 'share-dot';
+    el.appendChild(d);
+  }
+  return el;
+}
+
+function municipiosFiltrados() {
+  if (state.municipios.has('__TODOS__')) return DADOS.municipios;
+  return [...state.municipios];
+}
+function colecoesFiltradas() {
+  if (state.colecoes.has('__TODAS__')) return DADOS.colecoes;
+  return [...state.colecoes];
+}
+
+// === CALC ===
+function calcular() {
+  const muns = new Set(municipiosFiltrados());
+  const cols = new Set(colecoesFiltradas());
+  const todasMuns = state.municipios.has('__TODOS__');
+  const search = state.searchText.toLowerCase().trim();
+
+  const linhas = [];
+  for (const p of DADOS.produtos) {
+    if (!cols.has(p.colec)) continue;
+
+    // Search filter
+    if (search && !p.cod.toLowerCase().includes(search) && !p.desc.toLowerCase().includes(search)) continue;
+
+    let demFiltrada = 0;
+    if (todasMuns) {
+      demFiltrada = Object.values(p.demandas).reduce((a, b) => a + b, 0);
+    } else {
+      for (const m of muns) {
+        if (p.demandas[m]) demFiltrada += p.demandas[m];
+      }
+    }
+
+    if (demFiltrada === 0 && !search && !todasMuns) continue;
+
+    const sp = p.saldo + p.producao;
+    const fs = sp - demFiltrada;
+    const status = fs >= 0 ? 'Sobra' : 'Falta';
+    const cobertura = demFiltrada > 0 ? Math.min(999, Math.round((sp / demFiltrada) * 100)) : (sp > 0 ? 999 : 0);
+
+    linhas.push({
+      cod: p.cod,
+      desc: p.desc,
+      colec: p.colec,
+      dem_filtrada: demFiltrada,
+      saldo: p.saldo,
+      producao: p.producao,
+      saldo_prod: sp,
+      cobertura: cobertura,
+      falta_sobra: fs,
+      sugestao: p.sugestao,
+      def_prod: p.def_prod || 0,
+      status: status,
+      demandas: p.demandas,
+    });
+  }
+  return linhas;
+}
+
+function ordenar(linhas) {
+  const k = state.sortKey;
+  const dir = state.sortDir === 'asc' ? 1 : -1;
+  return [...linhas].sort((a, b) => {
+    let va = a[k], vb = b[k];
+    if (typeof va === 'string') return va.localeCompare(vb) * dir;
+    if (va == null) va = 0;
+    if (vb == null) vb = 0;
+    return (va - vb) * dir;
+  });
+}
+
+function toggleSection(id) {
+  const sec = document.getElementById('section-' + id);
+  const tog = document.getElementById('toggle-' + id);
+  if (state.collapsedSections.has(id)) {
+    state.collapsedSections.delete(id);
+    sec.classList.remove('collapsed');
+    tog.classList.remove('collapsed');
+  } else {
+    state.collapsedSections.add(id);
+    sec.classList.add('collapsed');
+    tog.classList.add('collapsed');
+  }
+}
+
+// === RENDER CHIPS ===
+function renderChips() {
+  const mapMuniCols = {};
+  const mapColMunis = {};
+  for (const m of DADOS.municipios) mapMuniCols[m] = new Set();
+  for (const col of DADOS.colecoes) mapColMunis[col] = new Set();
+  for (const p of DADOS.produtos) {
+    for (const m of Object.keys(p.demandas)) {
+      if (mapMuniCols[m]) mapMuniCols[m].add(p.colec);
+      if (mapColMunis[p.colec]) mapColMunis[p.colec].add(m);
+    }
+  }
+
+  const munsAtivos = state.municipios.has('__TODOS__') ? null : [...state.municipios];
+  const colsAtivas = state.colecoes.has('__TODAS__') ? null : [...state.colecoes];
+
+  const muniContaCruz = (m) => {
+    if (!colsAtivas) return null;
+    let n = 0;
+    for (const p of DADOS.produtos) {
+      if (!colsAtivas.includes(p.colec)) continue;
+      if (p.demandas[m] && p.demandas[m] > 0) n++;
+    }
+    return n;
+  };
+  const colContaCruz = (col) => {
+    if (!munsAtivos) return null;
+    let n = 0;
+    for (const p of DADOS.produtos) {
+      if (p.colec !== col) continue;
+      for (const m of munsAtivos) {
+        if (p.demandas[m] && p.demandas[m] > 0) { n++; break; }
+      }
+    }
+    return n;
+  };
+
+  // Municipios
+  const cm = document.getElementById('chips-mun');
+  cm.innerHTML = '';
+  const todos = chip('TODOS OS MUNICÍPIOS', state.municipios.has('__TODOS__'), true);
+  todos.onclick = () => { state.municipios.clear(); state.municipios.add('__TODOS__'); render(); };
+  cm.appendChild(todos);
+  for (const m of DADOS.municipios) {
+    const tipo = DADOS.tipos_municipio[m] || '';
+    const isActive = state.municipios.has(m);
+    const cruz = muniContaCruz(m);
+    let extra = '';
+    let badge = null;
+    if (cruz !== null && cruz > 0 && !isActive) extra = ' highlight';
+    if (cruz !== null && cruz > 0) badge = cruz;
+    const el = chip(m, isActive, false, tipo, badge);
+    if (extra) el.className += extra;
+    el.onclick = () => {
+      state.municipios.delete('__TODOS__');
+      if (state.municipios.has(m)) state.municipios.delete(m);
+      else state.municipios.add(m);
+      if (state.municipios.size === 0) state.municipios.add('__TODOS__');
+      render();
+    };
+    cm.appendChild(el);
+  }
+  document.getElementById('cnt-mun').textContent = `· ${DADOS.municipios.length}`;
+
+  // Colecoes
+  const cc = document.getElementById('chips-col');
+  cc.innerHTML = '';
+  const todas = chip('TODAS AS COLEÇÕES', state.colecoes.has('__TODAS__'), true);
+  todas.onclick = () => { state.colecoes.clear(); state.colecoes.add('__TODAS__'); render(); };
+  cc.appendChild(todas);
+  for (const col of DADOS.colecoes) {
+    const isActive = state.colecoes.has(col);
+    const cruz = colContaCruz(col);
+    let extra = '';
+    let badge = null;
+    if (cruz !== null && cruz > 0 && !isActive) extra = ' highlight';
+    if (cruz !== null && cruz > 0) badge = cruz;
+    const el = chip(col, isActive, false, null, badge);
+    if (extra) el.className += extra;
+    el.onclick = () => {
+      state.colecoes.delete('__TODAS__');
+      if (state.colecoes.has(col)) state.colecoes.delete(col);
+      else state.colecoes.add(col);
+      if (state.colecoes.size === 0) state.colecoes.add('__TODAS__');
+      render();
+    };
+    cc.appendChild(el);
+  }
+  document.getElementById('cnt-col').textContent = `· ${DADOS.colecoes.length}`;
+}
+
+// === RENDER KPIs ===
+function renderKPIs(linhas) {
+  const totDem = linhas.reduce((a, l) => a + l.dem_filtrada, 0);
+  const totSaldo = linhas.reduce((a, l) => a + l.saldo, 0);
+  const totProd = linhas.reduce((a, l) => a + l.producao, 0);
+  const totFalta = linhas.filter(l => l.falta_sobra < 0).reduce((a, l) => a + Math.abs(l.falta_sobra), 0);
+  const itensFalta = linhas.filter(l => l.falta_sobra < 0).length;
+
+  const kpis = [
+    {label: 'Itens Listados', val: linhas.length, sub: 'produtos no filtro'},
+    {label: 'Qtde Saída', val: fmt(totDem), sub: 'demanda total', cls: 'accent'},
+    {label: 'Saldo + Produção', val: fmt(totSaldo + totProd), sub: fmt(totSaldo) + ' + ' + fmt(totProd)},
+    {label: 'Itens em Falta', val: itensFalta, sub: itensFalta === 0 ? 'tudo coberto' : 'precisam produção', cls: itensFalta > 0 ? 'falta' : 'sobra'},
+    {label: 'Falta Total', val: fmt(totFalta), sub: 'unidades a produzir', cls: 'falta'},
+  ];
+
+  document.getElementById('kpis').innerHTML = kpis.map(k =>
+    `<div class="kpi">
+       <div class="kpi-label">${k.label}</div>
+       <div class="kpi-val ${k.cls || ''}">${k.val}</div>
+       <div class="kpi-sub">${k.sub}</div>
+     </div>`
+  ).join('');
+}
+
+// === RENDER GAUGE ===
+function renderGauge(linhas) {
+  const totDem = linhas.reduce((a, l) => a + l.dem_filtrada, 0);
+  const totSP = linhas.reduce((a, l) => a + l.saldo_prod, 0);
+  const pct = totDem > 0 ? Math.min(200, Math.round((totSP / totDem) * 100)) : 100;
+  const color = pct >= 100 ? 'var(--sobra)' : pct >= 70 ? 'var(--warn)' : 'var(--falta)';
+  const angle = Math.min(pct, 200) / 200 * 180;
+  const rad = (180 - angle) * Math.PI / 180;
+
+  // SVG arc
+  const cx = 120, cy = 110, r = 80;
+  const x1 = cx - r, y1 = cy;
+  const x2 = cx + r * Math.cos(Math.PI - rad * 0), y2 = cy - r * Math.sin(Math.PI - rad * 0);
+
+  // Arc path for fill
+  const endAngle = Math.PI - (angle * Math.PI / 180);
+  const ex = cx + r * Math.cos(endAngle);
+  const ey = cy - r * Math.sin(endAngle);
+  const largeArc = angle > 90 ? 1 : 0;
+
+  document.getElementById('gauge-wrap').innerHTML = `
+    <div class="gauge-container">
+      <div class="gauge-title">Cobertura Geral (Saldo+Prod / Demanda)</div>
+      <svg class="gauge-svg" viewBox="0 0 240 140" width="240" height="140">
+        <path d="M ${cx-r} ${cy} A ${r} ${r} 0 0 1 ${cx+r} ${cy}" fill="none" stroke="var(--bg-4)" stroke-width="14" stroke-linecap="round"/>
+        <path d="M ${cx-r} ${cy} A ${r} ${r} 0 ${largeArc} 1 ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${color}" stroke-width="14" stroke-linecap="round"/>
+        <text x="${cx}" y="${cy - 15}" text-anchor="middle" class="gauge-pct" fill="${color}">${pct}%</text>
+        <text x="${cx}" y="${cy + 8}" text-anchor="middle" fill="var(--txt-dim)" font-size="11" font-family="Inter Tight">${fmt(totSP)} / ${fmt(totDem)}</text>
+      </svg>
+    </div>
+  `;
+}
+
+// === RENDER COLLECTION CARDS ===
+function renderColCards(linhas) {
+  const colData = {};
+  for (const l of linhas) {
+    if (!colData[l.colec]) colData[l.colec] = { itens: 0, dem: 0, sp: 0, falta: 0, sobra: 0 };
+    const d = colData[l.colec];
+    d.itens++;
+    d.dem += l.dem_filtrada;
+    d.sp += l.saldo_prod;
+    if (l.falta_sobra < 0) d.falta += Math.abs(l.falta_sobra);
+    else d.sobra += l.falta_sobra;
+  }
+
+  const sorted = Object.entries(colData).sort((a, b) => b[1].falta - a[1].falta);
+
+  document.getElementById('colecao-cards').innerHTML = sorted.map(([nome, d]) => {
+    const pct = d.dem > 0 ? Math.min(100, Math.round((d.sp / d.dem) * 100)) : 100;
+    const barColor = pct >= 100 ? 'var(--sobra)' : pct >= 70 ? 'var(--warn)' : 'var(--falta)';
+    return `<div class="col-card" onclick="document.querySelectorAll('.chip').forEach(c => { if(c.textContent.includes('${nome.replace("'","\\'")}')) c.click(); })">
+      <div class="col-card-name">${nome}</div>
+      <div class="col-card-row"><span>Itens</span><span>${d.itens}</span></div>
+      <div class="col-card-row"><span>Demanda</span><span>${fmt(d.dem)}</span></div>
+      <div class="col-card-row"><span>Saldo+Prod</span><span>${fmt(d.sp)}</span></div>
+      <div class="col-card-row"><span>Falta</span><span class="falta-val">${d.falta > 0 ? fmt(d.falta) : '–'}</span></div>
+      <div class="col-card-row"><span>Sobra</span><span class="sobra-val">${d.sobra > 0 ? fmt(d.sobra) : '–'}</span></div>
+      <div class="col-card-bar"><div class="col-card-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// === RENDER GRAPHS ===
+function renderGraficos(linhas) {
+  const area = document.getElementById('graficos-area');
+
+  // 1. Top 10 itens em falta
+  const topFalta = linhas.filter(l => l.falta_sobra < 0)
+    .sort((a, b) => a.falta_sobra - b.falta_sobra)
+    .slice(0, 10);
+  const maxFalta = topFalta.length > 0 ? Math.abs(topFalta[0].falta_sobra) : 1;
+
+  // 2. Demanda por município
+  const munDem = {};
+  for (const l of linhas) {
+    for (const [m, v] of Object.entries(l.demandas)) {
+      const muns = new Set(municipiosFiltrados());
+      if (muns.has(m) || state.municipios.has('__TODOS__')) {
+        munDem[m] = (munDem[m] || 0) + v;
+      }
+    }
+  }
+  const topMun = Object.entries(munDem).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  const maxMun = topMun.length > 0 ? topMun[0][1] : 1;
+
+  // 3. Falta vs Sobra por coleção
+  const colFS = {};
+  for (const l of linhas) {
+    if (!colFS[l.colec]) colFS[l.colec] = { falta: 0, sobra: 0 };
+    if (l.falta_sobra < 0) colFS[l.colec].falta += Math.abs(l.falta_sobra);
+    else colFS[l.colec].sobra += l.falta_sobra;
+  }
+  const colFSSorted = Object.entries(colFS).sort((a, b) => (b[1].falta + b[1].sobra) - (a[1].falta + a[1].sobra)).slice(0, 10);
+  const maxCol = Math.max(...colFSSorted.map(([, d]) => d.falta + d.sobra), 1);
+
+  area.innerHTML = `
+    <div class="grafico-card">
+      <div class="grafico-titulo">Top 10 Itens em Falta</div>
+      ${topFalta.length === 0 ? '<div style="color:var(--txt-mute);text-align:center;padding:20px">Nenhum item em falta</div>' :
+        topFalta.map(l => `<div class="bar-row">
+          <div class="bar-label" title="${l.desc}">${l.cod}</div>
+          <div class="bar-track"><div class="bar-fill falta-fill" style="width:${Math.abs(l.falta_sobra)/maxFalta*100}%"></div></div>
+          <div class="bar-value" style="color:var(--falta)">${fmt(Math.abs(l.falta_sobra))}</div>
+        </div>`).join('')}
+    </div>
+
+    <div class="grafico-card">
+      <div class="grafico-titulo">Demanda por Município (Top 10)</div>
+      ${topMun.map(([m, v]) => `<div class="bar-row">
+        <div class="bar-label" title="${m}">${m.length > 20 ? m.slice(0,18)+'…' : m}</div>
+        <div class="bar-track"><div class="bar-fill accent-fill" style="width:${v/maxMun*100}%"></div></div>
+        <div class="bar-value">${fmt(v)}</div>
+      </div>`).join('')}
+    </div>
+
+    <div class="grafico-card full">
+      <div class="grafico-titulo">Falta vs Sobra por Coleção</div>
+      ${colFSSorted.map(([nome, d]) => {
+        const total = d.falta + d.sobra;
+        const pctF = total > 0 ? (d.falta / maxCol * 100) : 0;
+        const pctS = total > 0 ? (d.sobra / maxCol * 100) : 0;
+        return `<div class="bar-row">
+          <div class="bar-label" title="${nome}">${nome.length > 22 ? nome.slice(0,20)+'…' : nome}</div>
+          <div class="bar-track" style="display:flex">
+            <div class="bar-fill falta-fill" style="width:${pctF}%"></div>
+            <div class="bar-fill sobra-fill" style="width:${pctS}%"></div>
+          </div>
+          <div class="bar-value"><span style="color:var(--falta)">${d.falta > 0 ? fmt(d.falta) : ''}</span> <span style="color:var(--sobra)">${d.sobra > 0 ? fmt(d.sobra) : ''}</span></div>
+        </div>`;
+      }).join('')}
+      <div style="display:flex;gap:16px;margin-top:8px;font-size:10px;color:var(--txt-mute)">
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--falta)"></span> Falta</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--sobra)"></span> Sobra</span>
+      </div>
+    </div>
+  `;
+}
+
+// === RENDER RESULT BAR ===
+function renderResultBar(linhas) {
+  const muns = state.municipios.has('__TODOS__') ? 'TODOS OS MUNICÍPIOS' :
+    [...state.municipios].join(' + ');
+  const cols = state.colecoes.has('__TODAS__') ? 'todas as coleções' :
+    [...state.colecoes].join(' + ');
+
+  document.getElementById('summary-text').innerHTML =
+    `<em>${muns}</em> · ${cols}`;
+
+  const totFalta = linhas.filter(l => l.falta_sobra < 0).reduce((a, l) => a + Math.abs(l.falta_sobra), 0);
+  const totSobra = linhas.filter(l => l.falta_sobra > 0).reduce((a, l) => a + l.falta_sobra, 0);
+
+  document.getElementById('result-nums').innerHTML = `
+    <div class="num-block"><div class="num-label">Itens</div><div class="num-val">${linhas.length}</div></div>
+    <div class="num-block"><div class="num-label">Sobra</div><div class="num-val sobra">${fmt(totSobra)}</div></div>
+    <div class="num-block"><div class="num-label">Falta</div><div class="num-val falta">${fmt(totFalta)}</div></div>
+  `;
+}
+
+// === RENDER TABLE ===
+function renderTabela(linhas) {
+  const corpo = document.getElementById('corpo');
+  if (linhas.length === 0) {
+    corpo.innerHTML = '<tr><td colspan="13" class="empty-state">Nenhum item com demanda nos filtros selecionados.</td></tr>';
+    document.getElementById('rodape').innerHTML = '';
+    return;
+  }
+
+  const CRITICO = 1000;
+  let html = '';
+  for (const l of linhas) {
+    const isCritico = l.falta_sobra < -CRITICO;
+    const pct = l.dem_filtrada > 0 ? Math.min(100, Math.round((l.saldo_prod / l.dem_filtrada) * 100)) : (l.saldo_prod > 0 ? 100 : 0);
+    const progColor = pct >= 100 ? 'var(--sobra)' : pct >= 70 ? 'var(--warn)' : 'var(--falta)';
+    const isExpanded = state.expandedRows.has(l.cod);
+
+    html += `<tr class="${isCritico ? 'critico' : ''}">
+      <td><span class="expand-btn ${isExpanded ? 'open' : ''}" data-cod="${l.cod}">▶</span></td>
+      <td><span class="cod">${l.cod}</span></td>
+      <td class="desc">${l.desc}</td>
+      <td><span class="colec-tag">${l.colec}</span></td>
+      <td class="num">${fmt(l.dem_filtrada)}</td>
+      <td class="num">${fmt(l.saldo)}</td>
+      <td class="num">${fmt(l.producao)}</td>
+      <td class="num"><span class="saldo-prod">${fmt(l.saldo_prod)}</span></td>
+      <td class="num"><div class="prog-wrap"><div class="prog-bar"><div class="prog-bar-fill" style="width:${pct}%;background:${progColor}"></div></div><span class="prog-pct" style="color:${progColor}">${pct}%</span></div></td>
+      <td class="num"><span class="fs ${l.falta_sobra < 0 ? 'neg' : 'pos'}">${fmtNeg(l.falta_sobra)}</span></td>
+      <td class="num"><span class="sug">${l.sugestao || '–'}</span></td>
+      <td class="num"><span class="def-prod">${l.def_prod ? fmt(l.def_prod) : '–'}</span>${
+        l.falta_sobra < 0 && l.def_prod > 0 && l.def_prod < Math.abs(l.falta_sobra) 
+          ? '<span class="alert-icon danger" title="Def. Produção menor que a falta!">!</span>' 
+          : l.falta_sobra < 0 && (!l.def_prod || l.def_prod === 0) 
+            ? '<span class="alert-icon" title="Item em falta sem Def. Produção">?</span>' 
+            : ''
+      }</td>
+      <td><span class="status-pill ${l.status.toLowerCase()}">${l.status}</span></td>
+    </tr>`;
+
+    // Expanded row with demandas
+    const demEntries = Object.entries(l.demandas).sort((a, b) => b[1] - a[1]);
+    html += `<tr class="expand-row ${isExpanded ? 'show' : ''}" data-expand="${l.cod}">
+      <td colspan="13">
+        <div style="font-size:11px;color:var(--txt-mute);margin-bottom:6px;font-family:'JetBrains Mono',monospace;letter-spacing:0.1em;text-transform:uppercase">Demanda por Município — ${l.cod}</div>
+        <div class="expand-content">
+          ${demEntries.length > 0 ? demEntries.map(([m, v]) =>
+            `<span class="muni-tag">${m} <span class="muni-val">${fmt(v)}</span></span>`
+          ).join('') : '<span style="color:var(--txt-mute)">Sem demanda registrada</span>'}
+        </div>
+      </td>
+    </tr>`;
+  }
+  corpo.innerHTML = html;
+
+  // Expand click handlers
+  corpo.querySelectorAll('.expand-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cod = btn.dataset.cod;
+      if (state.expandedRows.has(cod)) {
+        state.expandedRows.delete(cod);
+        btn.classList.remove('open');
+        document.querySelector(`tr[data-expand="${cod}"]`).classList.remove('show');
+      } else {
+        state.expandedRows.add(cod);
+        btn.classList.add('open');
+        document.querySelector(`tr[data-expand="${cod}"]`).classList.add('show');
+      }
+    });
+  });
+
+  // TOTALIZADORES RODAPÉ
+  const totDem = linhas.reduce((a, l) => a + l.dem_filtrada, 0);
+  const totSaldo = linhas.reduce((a, l) => a + l.saldo, 0);
+  const totProd = linhas.reduce((a, l) => a + l.producao, 0);
+  const totSP = linhas.reduce((a, l) => a + l.saldo_prod, 0);
+  const totFs = linhas.reduce((a, l) => a + l.falta_sobra, 0);
+  const totSug = linhas.reduce((a, l) => a + (parseInt(l.sugestao) || 0), 0);
+  const totDef = linhas.reduce((a, l) => a + (l.def_prod || 0), 0);
+  const pctGeral = totDem > 0 ? Math.round((totSP / totDem) * 100) : 100;
+
+  document.getElementById('rodape').innerHTML = `
+    <tr>
+      <td></td>
+      <td colspan="3">TOTAL — ${linhas.length} ITENS</td>
+      <td class="num">${fmt(totDem)}</td>
+      <td class="num">${fmt(totSaldo)}</td>
+      <td class="num">${fmt(totProd)}</td>
+      <td class="num">${fmt(totSP)}</td>
+      <td class="num" style="font-size:11px;color:${pctGeral >= 100 ? 'var(--sobra)' : 'var(--falta)'}">${pctGeral}%</td>
+      <td class="num"><span class="fs ${totFs < 0 ? 'neg' : 'pos'}">${fmtNeg(totFs)}</span></td>
+      <td class="num"><span class="sug">${totSug > 0 ? fmt(totSug) : '–'}</span></td>
+      <td class="num"><span class="def-prod">${totDef > 0 ? fmt(totDef) : '–'}</span></td>
+      <td></td>
+    </tr>
+  `;
+
+  // Marcar coluna ordenada
+  document.querySelectorAll('th').forEach(th => {
+    const k = th.dataset.k;
+    if (!k) return;
+    th.classList.toggle('sorted', k === state.sortKey);
+    let arrow = th.querySelector('.arrow');
+    if (!arrow) {
+      arrow = document.createElement('span');
+      arrow.className = 'arrow';
+      th.appendChild(arrow);
+    }
+    arrow.textContent = state.sortDir === 'asc' ? '▲' : '▼';
+  });
+}
+
+// === SIMULADOR "E SE?" ===
+let simMunicipio = null;
+
+function populateSimSelect() {
+  const sel = document.getElementById('sim-mun-select');
+  // Municípios que NÃO estão na Estimativa (possíveis novos)
+  // Mas como não temos essa info, mostramos todos e simulamos adicionar demanda
+  const allMuns = new Set();
+  for (const p of DADOS.produtos) {
+    for (const m of Object.keys(p.demandas)) allMuns.add(m);
+  }
+  // Adicionar municípios que existem nos dados dos outros dashboards (colunas após Status)
+  for (const m of DADOS.municipios) allMuns.add(m);
+
+  const sorted = [...allMuns].sort();
+  sel.innerHTML = '<option value="">— Selecione um município —</option>' +
+    sorted.map(m => `<option value="${m}">${m}</option>`).join('');
+}
+
+function simularMunicipio() {
+  const sel = document.getElementById('sim-mun-select');
+  const mun = sel.value;
+  if (!mun) return;
+
+  simMunicipio = mun;
+  document.getElementById('sim-clear').style.display = '';
+
+  // Calcular impacto: o que muda se adicionarmos/focarmos esse município
+  const itensComDemanda = DADOS.produtos.filter(p => p.demandas[mun] && p.demandas[mun] > 0);
+  const itensSemDemanda = DADOS.produtos.filter(p => !p.demandas[mun] || p.demandas[mun] === 0);
+
+  const totDemMun = itensComDemanda.reduce((a, p) => a + p.demandas[mun], 0);
+  const itensEmFalta = itensComDemanda.filter(p => {
+    const sp = p.saldo + p.producao;
+    return sp < p.demandas[mun];
+  });
+  const faltaTotal = itensEmFalta.reduce((a, p) => {
+    const sp = p.saldo + p.producao;
+    const demTotal = Object.values(p.demandas).reduce((x, y) => x + y, 0);
+    return a + Math.max(0, demTotal - sp);
+  }, 0);
+
+  // Comparar com situação atual (todos municípios)
+  const faltaAtual = DADOS.produtos.filter(p => {
+    const sp = p.saldo + p.producao;
+    const demTotal = Object.values(p.demandas).reduce((x, y) => x + y, 0);
+    return sp < demTotal;
+  }).length;
+
+  document.getElementById('sim-result').innerHTML = `
+    <div class="sim-grid">
+      <div class="sim-card">
+        <div class="sim-card-label">Itens com demanda</div>
+        <div class="sim-card-val" style="color:var(--accent)">${itensComDemanda.length}</div>
+        <div class="sim-card-delta">de ${DADOS.produtos.length} produtos</div>
+      </div>
+      <div class="sim-card">
+        <div class="sim-card-label">Demanda do município</div>
+        <div class="sim-card-val" style="color:var(--accent)">${fmt(totDemMun)}</div>
+        <div class="sim-card-delta">unidades solicitadas</div>
+      </div>
+      <div class="sim-card ${itensEmFalta.length > 0 ? 'impacto-neg' : 'impacto-pos'}">
+        <div class="sim-card-label">Itens em falta (só ${mun.split('(')[0].trim()})</div>
+        <div class="sim-card-val" style="color:${itensEmFalta.length > 0 ? 'var(--falta)' : 'var(--sobra)'}">${itensEmFalta.length}</div>
+        <div class="sim-card-delta">${itensEmFalta.length > 0 ? 'precisam produção' : 'tudo coberto!'}</div>
+      </div>
+      <div class="sim-card">
+        <div class="sim-card-label">Coleções atendidas</div>
+        <div class="sim-card-val" style="color:var(--accent)">${new Set(itensComDemanda.map(p => p.colec)).size}</div>
+        <div class="sim-card-delta">de ${DADOS.colecoes.length} coleções</div>
+      </div>
+    </div>
+    ${itensComDemanda.length > 0 ? `
+    <table class="sim-table">
+      <thead><tr><th>Código</th><th>Descrição</th><th>Coleção</th><th style="text-align:right">Demanda ${mun.split('(')[0].trim()}</th><th style="text-align:right">Saldo+Prod</th><th style="text-align:right">Situação</th></tr></thead>
+      <tbody>
+      ${itensComDemanda.sort((a,b) => (a.saldo+a.producao-a.demandas[mun]) - (b.saldo+b.producao-b.demandas[mun])).slice(0, 20).map(p => {
+        const sp = p.saldo + p.producao;
+        const demM = p.demandas[mun];
+        const demTot = Object.values(p.demandas).reduce((x,y) => x+y, 0);
+        const fs = sp - demTot;
+        return `<tr>
+          <td>${p.cod}</td>
+          <td>${p.desc.slice(0,35)}${p.desc.length>35?'…':''}</td>
+          <td>${p.colec}</td>
+          <td style="text-align:right">${fmt(demM)}</td>
+          <td style="text-align:right">${fmt(sp)}</td>
+          <td style="text-align:right" class="${fs < 0 ? 'delta-neg' : 'delta-pos'}">${fmtNeg(fs)}</td>
+        </tr>`;
+      }).join('')}
+      ${itensComDemanda.length > 20 ? `<tr><td colspan="6" style="color:var(--txt-mute)">... +${itensComDemanda.length - 20} itens</td></tr>` : ''}
+      </tbody>
+    </table>` : '<div style="color:var(--txt-mute);text-align:center;padding:16px">Nenhum item com demanda para este município</div>'}
+  `;
+}
+
+function limparSimulacao() {
+  simMunicipio = null;
+  document.getElementById('sim-mun-select').value = '';
+  document.getElementById('sim-result').innerHTML = '';
+  document.getElementById('sim-clear').style.display = 'none';
+}
+
+// === EXPORTAR CSV ===
+function exportCSV() {
+  const linhas = ordenar(calcular());
+  const sep = ';';
+  const headers = ['Código','Descrição','Coleção','Qtde Saída','Saldo','Produção','Saldo+Prod','Cobertura %','Falta/Sobra','Sugestão','Def. Produção','Status'];
+  const rows = linhas.map(l => [
+    l.cod,
+    '"' + l.desc.replace(/"/g, '""') + '"',
+    '"' + l.colec + '"',
+    l.dem_filtrada,
+    l.saldo,
+    l.producao,
+    l.saldo_prod,
+    l.cobertura + '%',
+    l.falta_sobra,
+    l.sugestao || '',
+    l.def_prod || '',
+    l.status
+  ].join(sep));
+
+  const csv = '\uFEFF' + headers.join(sep) + '\n' + rows.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Dashboard_IPDH_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// === RELATÓRIO POR MUNICÍPIO ===
+function openReportSelector() {
+  // Abre seletor e gera relatório
+  const muns = [...new Set(DADOS.municipios)].sort();
+  const mun = prompt('Digite o nome do município para gerar o relatório:\n\n' + muns.join('\n'));
+  if (!mun) return;
+
+  // Encontrar município (busca parcial)
+  const found = DADOS.municipios.find(m => m.toLowerCase().includes(mun.toLowerCase()));
+  if (!found) {
+    alert('Município não encontrado: ' + mun);
+    return;
+  }
+  generateMuniReport(found);
+}
+
+function generateMuniReport(mun) {
+  const itens = DADOS.produtos.filter(p => p.demandas[mun] && p.demandas[mun] > 0)
+    .map(p => {
+      const dem = p.demandas[mun];
+      const sp = p.saldo + p.producao;
+      const fs = sp - dem;
+      return { ...p, dem_mun: dem, sp, fs_mun: fs };
+    })
+    .sort((a, b) => a.fs_mun - b.fs_mun);
+
+  const totDem = itens.reduce((a, p) => a + p.dem_mun, 0);
+  const totSP = itens.reduce((a, p) => a + p.sp, 0);
+  const emFalta = itens.filter(p => p.fs_mun < 0);
+  const totFalta = emFalta.reduce((a, p) => a + Math.abs(p.fs_mun), 0);
+  const tipo = DADOS.tipos_municipio[mun] || '';
+
+  document.getElementById('report-body').innerHTML = `
+    <div class="report-header">
+      <h2>${mun}</h2>
+      <div class="rpt-sub">${tipo ? tipo.toUpperCase() + ' · ' : ''}Relatório de Demanda · IPDH ${new Date().getFullYear()}</div>
+    </div>
+    <div class="report-kpis">
+      <div class="rpt-kpi"><div class="rpt-kpi-val" style="color:var(--accent)">${itens.length}</div><div class="rpt-kpi-label">Itens</div></div>
+      <div class="rpt-kpi"><div class="rpt-kpi-val">${fmt(totDem)}</div><div class="rpt-kpi-label">Demanda Total</div></div>
+      <div class="rpt-kpi"><div class="rpt-kpi-val" style="color:${emFalta.length > 0 ? 'var(--falta)' : 'var(--sobra)'}">${emFalta.length}</div><div class="rpt-kpi-label">Em Falta</div></div>
+      <div class="rpt-kpi"><div class="rpt-kpi-val" style="color:var(--falta)">${fmt(totFalta)}</div><div class="rpt-kpi-label">Falta Total</div></div>
+    </div>
+    <table class="report-table">
+      <thead><tr>
+        <th>Código</th><th>Descrição</th><th>Coleção</th>
+        <th class="num">Demanda</th><th class="num">Saldo+Prod</th><th class="num">Falta/Sobra</th><th>Status</th>
+      </tr></thead>
+      <tbody>
+      ${itens.map(p => `<tr${p.fs_mun < -1000 ? ' style="background:var(--falta-bg)"' : ''}>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${p.cod}</td>
+        <td style="font-size:11px">${p.desc}</td>
+        <td><span class="colec-tag">${p.colec}</span></td>
+        <td class="num">${fmt(p.dem_mun)}</td>
+        <td class="num">${fmt(p.sp)}</td>
+        <td class="num"><span style="color:${p.fs_mun < 0 ? 'var(--falta)' : 'var(--sobra)'};font-weight:600">${fmtNeg(p.fs_mun)}</span></td>
+        <td><span class="status-pill ${p.fs_mun < 0 ? 'falta' : 'sobra'}">${p.fs_mun < 0 ? 'Falta' : 'Sobra'}</span></td>
+      </tr>`).join('')}
+      </tbody>
+      <tfoot><tr style="font-weight:700;border-top:2px solid var(--line)">
+        <td colspan="3">TOTAL — ${itens.length} itens</td>
+        <td class="num">${fmt(totDem)}</td>
+        <td class="num">${fmt(totSP)}</td>
+        <td class="num"><span style="color:${totSP-totDem < 0 ? 'var(--falta)' : 'var(--sobra)'};font-weight:700">${fmtNeg(totSP - totDem)}</span></td>
+        <td></td>
+      </tr></tfoot>
+    </table>
+    <div class="report-actions">
+      <button class="sim-btn" onclick="printReport()">⎙ Imprimir Relatório</button>
+      <button class="sim-btn" style="background:var(--bg-3);color:var(--accent);border:1px solid var(--accent-dark)" onclick="exportReportCSV('${mun.replace(/'/g,"\\'")}')">↓ Exportar CSV</button>
+      <button class="sim-btn" style="background:var(--bg-3);color:var(--txt-dim)" onclick="closeReport()">Fechar</button>
+    </div>
+  `;
+
+  document.getElementById('modal-report').classList.add('show');
+}
+
+function closeReport() {
+  document.getElementById('modal-report').classList.remove('show');
+}
+
+function printReport() {
+  // Determinar quais municípios imprimir: os filtrados ativos
+  const munsFiltrados = municipiosFiltrados();
+
+  // Filtros ativos
+  const todasColecoes = state.colecoes.has('__TODAS__');
+  const statusFiltro = ''; // sem filtro de status extra — respeita o que está visível
+
+  const css = `
+    @page { size: A4 landscape; margin: 10mm 12mm; }
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; font-size: 13px; color: #1a1a1a; margin: 0; padding: 0; }
+    .page-title { text-align: center; font-size: 18px; font-weight: 700; color: #5a3e00; border-bottom: 3px solid #b8860b; padding-bottom: 8px; margin-bottom: 18px; }
+    .page-title small { display: block; font-size: 12px; color: #888; font-weight: 400; margin-top: 3px; }
+    .muni-bloco { page-break-inside: avoid; margin-bottom: 28px; }
+    .muni-bloco + .muni-bloco { border-top: 2px solid #e8d5a0; padding-top: 20px; }
+    .muni-titulo { font-size: 16px; font-weight: 700; color: #3d2b00; margin-bottom: 4px; }
+    .muni-sub { font-size: 11px; color: #888; margin-bottom: 10px; }
+    .kpis { display: flex; gap: 8px; margin-bottom: 10px; }
+    .kpi { flex: 1; text-align: center; padding: 6px; background: #fafafa; border: 1px solid #eee; border-radius: 4px; }
+    .kpi-val { font-size: 20px; font-weight: 700; }
+    .kpi-lbl { font-size: 10px; color: #888; text-transform: uppercase; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th { background: #5a3e00; color: #fff; padding: 6px 8px; text-align: left; font-size: 11px; text-transform: uppercase; }
+    th.num { text-align: right; }
+    td { padding: 5px 8px; border-bottom: 1px solid #eee; }
+    td.num { text-align: right; }
+    tr:nth-child(even) td { background: #fdf8f0; }
+    tr.falta-bg td { background: #fff0f0 !important; }
+    .colec-tag { background: #eee; padding: 2px 6px; border-radius: 3px; font-size: 10px; white-space: nowrap; }
+    .pill { padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+    .pill.falta { background: #fee; color: #c0392b; }
+    .pill.sobra { background: #efe; color: #27ae60; }
+    tfoot td { font-weight: 700; border-top: 2px solid #bbb; }
+  `;
+
+  // Construir HTML para cada município
+  // Pré-calcular demanda total por produto considerando TODOS os municípios filtrados
+  const demTotalPorProd = {};
+  for (const p of DADOS.produtos) {
+    let tot = 0;
+    for (const mun of munsFiltrados) {
+      tot += (p.demandas[mun] || 0);
+    }
+    if (tot > 0) demTotalPorProd[p.cod] = tot;
+  }
+
+  let blocosHtml = '';
+  for (const mun of munsFiltrados) {
+    let itens = DADOS.produtos.filter(p => {
+      if (!p.demandas[mun] || p.demandas[mun] <= 0) return false;
+      if (!todasColecoes && !state.colecoes.has(p.colec)) return false;
+      return true;
+    }).map(p => {
+      const dem_mun  = p.demandas[mun];
+      const dem_total = demTotalPorProd[p.cod] || dem_mun;
+      const sp = p.saldo + p.producao;
+      const fs = sp - dem_total;
+      return { ...p, dem_mun, dem_total, sp, fs_mun: fs };
+    }).sort((a, b) => a.fs_mun - b.fs_mun);
+
+    if (itens.length === 0) continue;
+
+    const totDem = itens.reduce((a, p) => a + p.dem_mun, 0);
+    const totSP  = itens.reduce((a, p) => a + p.sp, 0);
+    const emFalta = itens.filter(p => p.fs_mun < 0);
+    const totFalta = emFalta.reduce((a, p) => a + Math.abs(p.fs_mun), 0);
+    const tipo = DADOS.tipos_municipio[mun] || '';
+
+    const rows = itens.map(p => `
+      <tr class="${p.fs_mun < 0 ? 'falta-bg' : ''}">
+        <td style="font-family:monospace">${p.cod}</td>
+        <td>${p.desc}</td>
+        <td><span class="colec-tag">${p.colec}</span></td>
+        <td class="num">${fmt(p.dem_mun)}</td>
+        <td class="num" style="color:#555">${fmt(p.dem_total)}</td>
+        <td class="num">${fmt(p.sp)}</td>
+        <td class="num" style="color:${p.fs_mun < 0 ? '#c0392b' : '#27ae60'};font-weight:600">${fmtNeg(p.fs_mun)}</td>
+        <td><span class="pill ${p.fs_mun < 0 ? 'falta' : 'sobra'}">${p.fs_mun < 0 ? 'Falta' : 'Sobra'}</span></td>
+      </tr>`).join('');
+
+    blocosHtml += `
+      <div class="muni-bloco">
+        <div class="muni-titulo">${mun}</div>
+        <div class="muni-sub">${tipo ? tipo.toUpperCase() + ' · ' : ''}${itens.length} itens · Demanda total: ${fmt(totDem)}</div>
+        <div class="kpis">
+          <div class="kpi"><div class="kpi-val" style="color:#b8860b">${itens.length}</div><div class="kpi-lbl">Itens</div></div>
+          <div class="kpi"><div class="kpi-val">${fmt(totDem)}</div><div class="kpi-lbl">Demanda</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:${emFalta.length > 0 ? '#c0392b' : '#27ae60'}">${emFalta.length}</div><div class="kpi-lbl">Em Falta</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:#c0392b">${fmt(totFalta)}</div><div class="kpi-lbl">Falta Total</div></div>
+        </div>
+        <table>
+          <thead><tr>
+            <th>Código</th><th>Descrição</th><th>Coleção</th>
+            <th class="num">Dem. Município</th><th class="num">Dem. Total</th><th class="num">Saldo+Prod</th><th class="num">Falta/Sobra</th><th>Status</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+          <tfoot><tr>
+            <td colspan="3">TOTAL — ${itens.length} itens</td>
+            <td class="num">${fmt(totDem)}</td>
+            <td class="num">${fmt(itens.reduce((a,p)=>a+p.dem_total,0))}</td>
+            <td class="num">${fmt(totSP)}</td>
+            <td class="num" style="color:${totSP-itens.reduce((a,p)=>a+p.dem_total,0) < 0 ? '#c0392b' : '#27ae60'};font-weight:700">${fmtNeg(totSP - itens.reduce((a,p)=>a+p.dem_total,0))}</td>
+            <td></td>
+          </tr></tfoot>
+        </table>
+      </div>`;
+  }
+
+  if (!blocosHtml) {
+    alert('Nenhum município com dados para imprimir com os filtros atuais.');
+    return;
+  }
+
+  const filtroDesc = [
+    !todasColecoes ? `Coleções: ${[...state.colecoes].join(', ')}` : '',
+    !state.municipios.has('__TODOS__') ? `Municípios: ${[...state.municipios].join(', ')}` : ''
+  ].filter(Boolean).join(' · ') || 'Todos os filtros';
+
+  const dataHoje = new Date().toLocaleDateString('pt-BR');
+  const w = window.open('', '_blank', 'width=900,height=700');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>Relatório de Demanda — IPDH</title>
+    <style>${css}</style>
+  </head><body>
+    <div class="page-title">
+      Relatório de Demanda por Município — IPDH
+      <small>${filtroDesc} · Gerado em ${dataHoje}</small>
+    </div>
+    ${blocosHtml}
+  </body></html>`);
+  w.document.close();
+  setTimeout(() => { w.print(); }, 600);
+}
+
+function exportReportCSV(mun) {
+  const itens = DADOS.produtos.filter(p => p.demandas[mun] && p.demandas[mun] > 0)
+    .map(p => ({ ...p, dem_mun: p.demandas[mun], fs_mun: (p.saldo + p.producao) - p.demandas[mun] }));
+
+  const sep = ';';
+  const headers = ['Código','Descrição','Coleção','Demanda','Saldo+Prod','Falta/Sobra','Status'];
+  const rows = itens.map(p => [
+    p.cod, '"' + p.desc.replace(/"/g,'""') + '"', '"' + p.colec + '"',
+    p.dem_mun, p.saldo + p.producao, p.fs_mun, p.fs_mun < 0 ? 'Falta' : 'Sobra'
+  ].join(sep));
+
+  const csv = '\uFEFF' + headers.join(sep) + '\n' + rows.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Relatorio_' + mun.replace(/[^a-zA-Z0-9]/g, '_') + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// === MAPA DO BRASIL ===
+function renderMapa(linhas) {
+  // Extrair UF de cada município
+  const ufMap = {};
+  for (const m of DADOS.municipios) {
+    const match = m.match(/\(([A-Z]{2})\)/);
+    ufMap[m] = match ? match[1] : '??';
+  }
+
+  // Demanda por estado
+  const demUF = {};
+  const munsUF = {};
+  for (const l of linhas) {
+    for (const [m, v] of Object.entries(l.demandas)) {
+      const uf = ufMap[m] || '??';
+      demUF[uf] = (demUF[uf] || 0) + v;
+      if (!munsUF[uf]) munsUF[uf] = new Set();
+      munsUF[uf].add(m);
+    }
+  }
+
+  const sorted = Object.entries(demUF).filter(([uf]) => uf !== '??').sort((a, b) => b[1] - a[1]);
+  const maxDem = sorted.length > 0 ? sorted[0][1] : 1;
+
+  // Cores por intensidade
+  const ufColor = {};
+  for (const [uf, dem] of sorted) {
+    const intensity = Math.round((dem / maxDem) * 100);
+    if (intensity > 70) ufColor[uf] = 'var(--accent)';
+    else if (intensity > 40) ufColor[uf] = 'var(--accent-dark)';
+    else if (intensity > 15) ufColor[uf] = 'var(--warn)';
+    else ufColor[uf] = 'var(--bg-4)';
+  }
+
+  // SVG simplificado do Brasil (posições aproximadas dos estados)
+  const estados = {
+    AC:[68,280,45,35],AM:[95,210,120,80],RR:[105,135,50,45],PA:[220,200,110,75],AP:[245,150,40,45],
+    MA:[310,215,65,55],TO:[290,290,50,60],PI:[330,260,45,50],CE:[370,230,35,35],RN:[395,235,25,20],
+    PB:[390,255,30,18],PE:[375,270,45,20],AL:[395,285,20,18],SE:[390,300,18,15],BA:[330,310,70,70],
+    MT:[210,320,80,70],GO:[275,360,55,50],DF:[300,370,12,10],MS:[220,390,55,50],MG:[310,370,70,55],
+    ES:[370,385,25,25],RJ:[355,410,30,20],SP:[280,410,55,35],PR:[260,440,50,30],SC:[275,470,40,25],
+    RS:[260,495,50,40]
+  };
+
+  let svgPaths = '';
+  for (const [uf, [x, y, w, h]] of Object.entries(estados)) {
+    const fill = ufColor[uf] || 'var(--bg-3)';
+    const dem = demUF[uf] || 0;
+    const muns = munsUF[uf] ? munsUF[uf].size : 0;
+    svgPaths += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${fill}" data-uf="${uf}">
+      <title>${uf}: ${dem > 0 ? dem.toLocaleString('pt-BR') + ' un. · ' + muns + ' mun.' : 'Sem demanda'}</title>
+    </rect>
+    <text x="${x + w/2}" y="${y + h/2 + 4}" text-anchor="middle" fill="var(--txt)" font-size="10" font-family="JetBrains Mono" font-weight="700" pointer-events="none">${uf}</text>`;
+  }
+
+  const rankHTML = sorted.map(([uf, dem]) => {
+    const muns = munsUF[uf] ? [...munsUF[uf]] : [];
+    const pct = (dem / maxDem * 100).toFixed(0);
+    return `<div class="estado-row" onclick="this.querySelector('.estado-muns').style.display = this.querySelector('.estado-muns').style.display === 'none' ? '' : 'none'">
+      <span class="estado-uf">${uf}</span>
+      <div class="estado-bar-track"><div class="estado-bar-fill" style="width:${pct}%;background:${ufColor[uf]}"></div></div>
+      <div class="estado-info">
+        <div class="estado-dem">${fmt(dem)}</div>
+        <div class="estado-muns" style="display:none">${muns.join(', ')}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('mapa-area').innerHTML = `
+    <div class="mapa-card">
+      <div class="grafico-titulo">Distribuição Geográfica</div>
+      <div class="mapa-svg-wrap">
+        <svg viewBox="50 120 420 430" width="380" height="380" xmlns="http://www.w3.org/2000/svg">
+          ${svgPaths}
+        </svg>
+      </div>
+      <div class="mapa-legend">
+        <div class="mapa-legend-item"><div class="mapa-legend-color" style="background:var(--accent)"></div> Alta</div>
+        <div class="mapa-legend-item"><div class="mapa-legend-color" style="background:var(--accent-dark)"></div> Média</div>
+        <div class="mapa-legend-item"><div class="mapa-legend-color" style="background:var(--warn)"></div> Baixa</div>
+        <div class="mapa-legend-item"><div class="mapa-legend-color" style="background:var(--bg-4)"></div> Mínima</div>
+      </div>
+    </div>
+    <div class="mapa-card">
+      <div class="grafico-titulo">Ranking por Estado (clique pra ver municípios)</div>
+      <div class="estado-rank">${rankHTML}</div>
+    </div>
+  `;
+}
+
+// === TIMELINE ===
+function renderTimeline(linhas) {
+  // Gerar marcos automáticos baseados nos dados
+  const marcos = [];
+  const totItens = linhas.length;
+  const emFalta = linhas.filter(l => l.falta_sobra < 0);
+  const emSobra = linhas.filter(l => l.falta_sobra >= 0);
+  const totDem = linhas.reduce((a, l) => a + l.dem_filtrada, 0);
+  const totSP = linhas.reduce((a, l) => a + l.saldo_prod, 0);
+  const comDefProd = linhas.filter(l => l.def_prod > 0);
+  const totDefProd = comDefProd.reduce((a, l) => a + l.def_prod, 0);
+  const gerado = DADOS.gerado_em || new Date().toLocaleDateString('pt-BR');
+
+  // Marco 1: Situação atual
+  marcos.push({
+    tipo: emFalta.length > totItens * 0.3 ? 'falta' : emFalta.length > 0 ? 'warn' : 'sobra',
+    titulo: 'Situação Atual do Estoque',
+    data: gerado,
+    desc: `${totItens} itens analisados. ${emFalta.length} em falta (${fmt(emFalta.reduce((a,l) => a + Math.abs(l.falta_sobra), 0))} un.) e ${emSobra.length} com cobertura.`,
+    tags: ['Estoque', `${Math.round(totSP/totDem*100)}% cobertura`]
+  });
+
+  // Marco 2: Produção em andamento
+  const emProducao = linhas.filter(l => l.producao > 0);
+  if (emProducao.length > 0) {
+    const totProd = emProducao.reduce((a, l) => a + l.producao, 0);
+    marcos.push({
+      tipo: 'accent',
+      titulo: 'Produção em Andamento',
+      data: 'Em curso',
+      desc: `${emProducao.length} itens com produção ativa totalizando ${fmt(totProd)} unidades.`,
+      tags: emProducao.slice(0, 4).map(l => l.cod)
+    });
+  }
+
+  // Marco 3: Definição de produção
+  if (comDefProd.length > 0) {
+    marcos.push({
+      tipo: 'accent',
+      titulo: 'Produção Definida',
+      data: 'Planejado',
+      desc: `${comDefProd.length} itens com definição de produção aprovada. Total: ${fmt(totDefProd)} unidades.`,
+      tags: ['Def. Produção']
+    });
+  }
+
+  // Marco 4: Itens críticos
+  const criticos = linhas.filter(l => l.falta_sobra < -1000).sort((a,b) => a.falta_sobra - b.falta_sobra);
+  if (criticos.length > 0) {
+    marcos.push({
+      tipo: 'falta',
+      titulo: 'Itens Críticos — Ação Urgente',
+      data: 'Prioridade',
+      desc: `${criticos.length} itens com falta superior a 1.000 unidades. Maior: ${criticos[0].cod} com falta de ${fmt(Math.abs(criticos[0].falta_sobra))}.`,
+      tags: criticos.slice(0, 5).map(l => l.cod)
+    });
+  }
+
+  // Marco 5: Próximos passos
+  const semDef = linhas.filter(l => l.falta_sobra < 0 && (!l.def_prod || l.def_prod === 0));
+  marcos.push({
+    tipo: semDef.length > 0 ? 'warn' : 'sobra',
+    titulo: 'Próximos Passos',
+    data: 'Pendente',
+    desc: semDef.length > 0
+      ? `${semDef.length} itens em falta aguardando definição de produção. Falta total pendente: ${fmt(semDef.reduce((a,l) => a + Math.abs(l.falta_sobra), 0))} un.`
+      : 'Todos os itens em falta já possuem definição de produção.',
+    tags: semDef.length > 0 ? ['Definir produção', `${semDef.length} itens`] : ['Completo']
+  });
+
+  // Marco 6: Coleções top
+  const colDem = {};
+  for (const l of linhas) {
+    colDem[l.colec] = (colDem[l.colec] || 0) + l.dem_filtrada;
+  }
+  const topCol = Object.entries(colDem).sort((a,b) => b[1] - a[1]).slice(0, 3);
+  marcos.push({
+    tipo: 'accent',
+    titulo: 'Coleções com Maior Demanda',
+    data: 'Ranking',
+    desc: topCol.map(([c, v], i) => `${i+1}. ${c}: ${fmt(v)} un.`).join(' · '),
+    tags: topCol.map(([c]) => c)
+  });
+
+  document.getElementById('timeline-area').innerHTML = `
+    <div class="grafico-titulo">Panorama Operacional</div>
+    <div class="timeline">
+      ${marcos.map(m => `
+        <div class="tl-item">
+          <div class="tl-dot ${m.tipo}"></div>
+          <div class="tl-header">
+            <span class="tl-title">${m.titulo}</span>
+            <span class="tl-date">${m.data}</span>
+          </div>
+          <div class="tl-desc">${m.desc}</div>
+          <div class="tl-tags">${m.tags.map(t => `<span class="tl-tag">${t}</span>`).join('')}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// Populate simulator on load
+populateSimSelect();
+function render() {
+  const linhas = ordenar(calcular());
+  renderChips();
+  renderKPIs(linhas);
+  renderGauge(linhas);
+  renderPendencias(linhas);
+  renderColCards(linhas);
+  renderGraficos(linhas);
+  renderComparativo(linhas);
+  renderMapa(linhas);
+  renderTimeline(linhas);
+  renderResultBar(linhas);
+  renderTabela(linhas);
+}
+
+// === THEME TOGGLE ===
+function toggleTheme() {
+  const html = document.documentElement;
+  const isLight = html.classList.toggle('light');
+  document.getElementById('theme-icon').textContent = isLight ? '🌙' : '☀';
+  document.getElementById('theme-label').textContent = isLight ? 'ESCURO' : 'CLARO';
+  localStorage.setItem('ipdh-theme', isLight ? 'light' : 'dark');
+}
+// Restore saved theme
+if (localStorage.getItem('ipdh-theme') === 'light') {
+  document.documentElement.classList.add('light');
+  document.getElementById('theme-icon').textContent = '🌙';
+  document.getElementById('theme-label').textContent = 'ESCURO';
+}
+
+// === RENDER PENDÊNCIAS ===
+function renderPendencias(linhas) {
+  // 1. Itens críticos (falta > 1000)
+  const criticos = linhas.filter(l => l.falta_sobra < -1000)
+    .sort((a, b) => a.falta_sobra - b.falta_sobra);
+
+  // 2. Itens com falta mas sem def. produção definida
+  const semDefProd = linhas.filter(l => l.falta_sobra < 0 && (!l.def_prod || l.def_prod === 0))
+    .sort((a, b) => a.falta_sobra - b.falta_sobra);
+
+  // 3. Def. Produção insuficiente (def_prod < falta)
+  const defInsuf = linhas.filter(l => l.falta_sobra < 0 && l.def_prod > 0 && l.def_prod < Math.abs(l.falta_sobra))
+    .sort((a, b) => a.falta_sobra - b.falta_sobra);
+
+  // 4. Itens sem sugestão que estão em falta
+  const semSug = linhas.filter(l => l.falta_sobra < 0 && !l.sugestao)
+    .sort((a, b) => a.falta_sobra - b.falta_sobra);
+
+  const renderList = (items, valFn) => items.slice(0, 8).map(l =>
+    `<div class="pend-item"><span class="pend-cod">${l.cod}</span><span>${l.desc.slice(0,30)}${l.desc.length>30?'…':''}</span><span class="pend-val">${valFn(l)}</span></div>`
+  ).join('') + (items.length > 8 ? `<div class="pend-item" style="color:var(--txt-mute)">... +${items.length - 8} itens</div>` : '');
+
+  document.getElementById('pendencias-area').innerHTML = `
+    <div class="pend-grid">
+      <div class="pend-card">
+        <div class="pend-card-title">Itens Críticos (falta &gt; 1.000)</div>
+        <div class="pend-card-val falta">${criticos.length}</div>
+        <div class="pend-card-sub">${criticos.length > 0 ? 'Falta total: ' + fmt(criticos.reduce((a,l) => a + Math.abs(l.falta_sobra), 0)) : 'Nenhum item crítico'}</div>
+        <div class="pend-list">${renderList(criticos, l => fmtNeg(l.falta_sobra))}</div>
+      </div>
+      <div class="pend-card warn">
+        <div class="pend-card-title">Falta SEM Def. Produção</div>
+        <div class="pend-card-val warn">${semDefProd.length}</div>
+        <div class="pend-card-sub">${semDefProd.length > 0 ? 'Precisam definir produção' : 'Todos definidos'}</div>
+        <div class="pend-list">${renderList(semDefProd, l => fmtNeg(l.falta_sobra))}</div>
+      </div>
+      <div class="pend-card warn">
+        <div class="pend-card-title">Def. Produção Insuficiente</div>
+        <div class="pend-card-val warn">${defInsuf.length}</div>
+        <div class="pend-card-sub">${defInsuf.length > 0 ? 'Def.Prod menor que a falta' : 'Todos suficientes'}</div>
+        <div class="pend-list">${renderList(defInsuf, l => fmt(l.def_prod) + ' < ' + fmt(Math.abs(l.falta_sobra)))}</div>
+      </div>
+      <div class="pend-card info">
+        <div class="pend-card-title">Falta SEM Sugestão</div>
+        <div class="pend-card-val info">${semSug.length}</div>
+        <div class="pend-card-sub">${semSug.length > 0 ? 'Sem sugestão de impressão' : 'Todos com sugestão'}</div>
+        <div class="pend-list">${renderList(semSug, l => fmtNeg(l.falta_sobra))}</div>
+      </div>
+    </div>
+  `;
+}
+
+// === RENDER COMPARATIVO SUGESTÃO vs DEF. PRODUÇÃO ===
+function renderComparativo(linhas) {
+  const items = linhas.filter(l => {
+    const sug = parseInt(l.sugestao) || 0;
+    const def = l.def_prod || 0;
+    return sug > 0 || def > 0;
+  }).sort((a, b) => {
+    const sugA = parseInt(a.sugestao) || 0, sugB = parseInt(b.sugestao) || 0;
+    return sugB - sugA;
+  }).slice(0, 15);
+
+  if (items.length === 0) {
+    document.getElementById('comparativo-area').innerHTML = '<div class="grafico-titulo">Sugestão vs Definição de Produção</div><div style="color:var(--txt-mute);text-align:center;padding:20px">Nenhum item com sugestão ou definição</div>';
+    return;
+  }
+
+  const maxVal = Math.max(...items.map(l => Math.max(parseInt(l.sugestao) || 0, l.def_prod || 0)), 1);
+
+  document.getElementById('comparativo-area').innerHTML = `
+    <div class="grafico-titulo">Sugestão vs Definição de Produção (Top 15)</div>
+    ${items.map(l => {
+      const sug = parseInt(l.sugestao) || 0;
+      const def = l.def_prod || 0;
+      const pctSug = (sug / maxVal * 100).toFixed(1);
+      const pctDef = (def / maxVal * 100).toFixed(1);
+      const gap = def > 0 && sug > 0 ? def - sug : null;
+      const alertClass = (def > 0 && sug > 0 && def < sug) ? ' danger' : '';
+      return `<div class="comp-row">
+        <div class="comp-label">${l.cod}</div>
+        <div class="comp-bar-track">
+          <div class="comp-bar-sug" style="width:${pctSug}%"></div>
+          <div class="comp-bar-def" style="width:${pctDef}%"></div>
+        </div>
+        <div class="comp-vals">
+          <span class="sug-v">${sug > 0 ? fmt(sug) : '–'}</span>
+          <span class="def-v">${def > 0 ? fmt(def) : '–'}</span>
+          ${gap !== null ? `<span style="color:${gap >= 0 ? 'var(--sobra)' : 'var(--falta)'};font-weight:700">${gap >= 0 ? '+' : ''}${fmt(gap)}</span>` : ''}
+        </div>
+      </div>`;
+    }).join('')}
+    <div style="display:flex;gap:16px;margin-top:10px;font-size:10px;color:var(--txt-mute)">
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--warn);opacity:0.7"></span> Sugestão</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--accent)"></span> Def. Produção</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="color:var(--sobra)">+</span> Def &gt; Sug</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="color:var(--falta)">−</span> Def &lt; Sug</span>
+    </div>
+  `;
+}
+
+// === EVENTS ===
+document.querySelectorAll('th[data-k]').forEach(th => {
+  th.addEventListener('click', () => {
+    const k = th.dataset.k;
+    if (state.sortKey === k) {
+      state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      state.sortKey = k;
+      state.sortDir = (k === 'desc' || k === 'colec' || k === 'cod') ? 'asc' : 'desc';
+    }
+    render();
+  });
+});
+
+// Search
+let searchTimer;
+document.getElementById('search-input').addEventListener('input', (e) => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    state.searchText = e.target.value;
+    render();
+  }, 250);
+});
+
+// Date
+const hoje = new Date();
+document.getElementById('hoje').textContent =
+  hoje.toLocaleDateString('pt-BR', {day: '2-digit', month: 'long', year: 'numeric'}).toUpperCase();
+
+// Init — carrega dados.json se existir, senão usa dados embutidos
+(async () => {
+  try {
+    const resp = await fetch('dados.json?t=' + Date.now());
+    if (resp.ok) {
+      const json = await resp.json();
+      Object.assign(DADOS, json);
+    }
+  } catch(e) { /* usa dados embutidos */ }
+  render();
+})();
+</script>
+</body>
+</html>
